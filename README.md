@@ -6,7 +6,7 @@
 ## 📧 Miembros y contacto   
 
 - **Nicolás Andrés Castellanos Rico** -  ncastellanosr@unal.edu.co
-- **Nicolás Andrés Castellanos Rico** -  etrianad@unal.edu.co
+- **Erfán Andrés Triana Duque** -  etrianad@unal.edu.co
 - **Juan David Yopasa Maldonado** -  jyopasam@unal.edu.co
 - **Juan Felipe Quiroga Medina** -  juquirogam@unal.edu.co
 
