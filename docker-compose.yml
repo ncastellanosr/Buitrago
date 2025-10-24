@@ -1,0 +1,19 @@
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql-5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'UBudget_db'
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: 'UNAL1234'
+      MYSQL_ROOT_PASSWORD: 'UNAL0987'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - mysql-db:/var/lib/mysql
+volumes:
+    mysql-db:
+
