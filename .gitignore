@@ -1,5 +1,5 @@
 #No quiten esto por nada en el mundo o hay tabla
-.env
+*.env
 .vscode/*
 !.vscode/extensions.json
 .idea

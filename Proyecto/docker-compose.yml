@@ -1,0 +1,34 @@
+networks:
+  app-network-public:
+    driver: bridge
+volumes:
+  mysql-data:
+    driver: local
+services:
+  db: #ejecutar mysql en docker
+    image: mysql
+    container_name: db-mysql
+    networks:
+      - app-network-public
+    restart: always
+    env_file:
+      - ./llave.env
+    #ports:
+    #  - "3306:3306"
+    expose:
+      - '3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d:ro #para ejecutar la base de datos en el archivo .sql que está en initdb
+    #  - /c/docker/shared:/usr/shared
+  app: #para correr node.js en docker y no tener que instalarlo localmente (pero faltan dependencias y librerias vida malparida)
+    build: 
+      context: .
+      dockerfile: ./Dockerfile
+    image: proyectonode:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network-public
