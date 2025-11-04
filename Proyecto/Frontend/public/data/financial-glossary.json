@@ -1,0 +1,68 @@
+{
+  "terms": {
+    "cdt": {
+      "definition": "Un Certificado de Depósito a Término (CDT) es un producto de ahorro donde depositas dinero por un período fijo a cambio de una tasa de interés garantizada.",
+      "explanation": "Los CDTs son una de las inversiones más seguras en Colombia. Al invertir en un CDT, básicamente le prestas dinero al banco por un tiempo determinado, y a cambio recibes intereses. La ventaja principal es que tu dinero está protegido y conoces exactamente cuánto ganarás.",
+      "example": "Si inviertes $1,000,000 en un CDT a 12% anual por 1 año, al final recibirás $1,120,000."
+    },
+    "tes": {
+      "definition": "Los Títulos de Tesorería (TES) son bonos emitidos por el Gobierno Nacional de Colombia para financiar sus actividades.",
+      "explanation": "Los TES son considerados la inversión más segura del país porque están respaldados por el gobierno. Funcionan como un préstamo que le haces al Estado colombiano, quien se compromete a pagarte intereses y devolverte el capital en una fecha determinada.",
+      "example": "Si compras un TES que paga 10% anual, por cada $100,000 invertidos recibirás $10,000 al año en intereses."
+    },
+    "acciones": {
+      "definition": "Las acciones representan una parte de la propiedad de una empresa. Al comprar acciones, te conviertes en socio de esa compañía.",
+      "explanation": "Cuando compras acciones, puedes ganar dinero de dos formas: por dividendos (parte de las ganancias que reparte la empresa) y por valorización (si el precio de la acción sube). Sin embargo, también puedes perder dinero si el precio baja.",
+      "example": "Si compras 100 acciones de Ecopetrol a $2,000 cada una, habrás invertido $200,000. Si cada acción sube a $2,200, tu inversión valdrá $220,000."
+    },
+    "bonos": {
+      "definition": "Los bonos son instrumentos de deuda donde prestas dinero a una entidad (gobierno o empresa) a cambio de pagos de intereses regulares.",
+      "explanation": "Los bonos son más seguros que las acciones pero menos seguros que los CDTs. Ofrecen pagos de intereses fijos durante la vida del bono y devuelven el capital al vencimiento. El precio puede fluctuar en el mercado secundario.",
+      "example": "Un bono a 5 años con 8% de interés anual significa que por cada $1,000,000 invertidos recibirás $80,000 cada año durante 5 años, más la devolución de tu millón al final."
+    },
+    "fincaraiz": {
+      "definition": "La inversión en finca raíz consiste en comprar propiedades (casas, apartamentos, locales) para generar ingresos por arriendo o ganancia por valorización.",
+      "explanation": "Invertir en bienes raíces puede ser muy rentable en Colombia, especialmente en ciudades principales. Puedes ganar dinero arrendando la propiedad (rentabilidad por arriendo) y por el aumento del valor de la propiedad con el tiempo (plusvalía).",
+      "example": "Si compras un apartamento por $200,000,000 y lo arriendas por $1,500,000 mensuales, tu rentabilidad anual por arriendo sería del 9% ($18,000,000 al año)."
+    },
+    "diversificacion": {
+      "definition": "La diversificación es la estrategia de repartir tus inversiones en diferentes tipos de activos para reducir el riesgo.",
+      "explanation": "La idea es 'no poner todos los huevos en la misma canasta'. Si diversificas correctamente, cuando un tipo de inversión baje, otros pueden subir, equilibrando tu portafolio y reduciendo las pérdidas potenciales.",
+      "example": "En lugar de invertir todo en acciones, podrías poner 40% en CDTs, 30% en acciones, 20% en bonos y 10% en finca raíz."
+    },
+    "liquidez": {
+      "definition": "La liquidez se refiere a qué tan fácil y rápido puedes convertir una inversión en dinero en efectivo.",
+      "explanation": "Una inversión muy líquida es fácil de vender rápidamente, como las acciones que se tranzan en bolsa. Una inversión poco líquida, como una casa, puede tardar meses en venderse.",
+      "example": "Una cuenta de ahorros tiene liquidez inmediata, un CDT tiene liquidez al vencimiento, y una casa puede tardar 6 meses o más en venderse."
+    },
+    "rentabilidad": {
+      "definition": "La rentabilidad es la ganancia que obtienes de una inversión, usualmente expresada como porcentaje anual.",
+      "explanation": "La rentabilidad te dice cuánto gana tu dinero. Se calcula dividiendo la ganancia entre la inversión inicial y multiplicando por 100. Mayor rentabilidad generalmente significa mayor riesgo.",
+      "example": "Si invertiste $1,000,000 y al año tienes $1,120,000, tu rentabilidad fue del 12%."
+    },
+    "inflacion": {
+      "definition": "La inflación es el aumento generalizado de los precios de bienes y servicios en una economía durante un período de tiempo.",
+      "explanation": "La inflación reduce el poder de compra de tu dinero. Si la inflación es 5% anual, lo que hoy cuesta $100 el próximo año costará $105. Por eso es importante que tus inversiones superen la inflación.",
+      "example": "Si la inflación es 4% y tu inversión rinde 6%, tu rentabilidad real es solo 2% (6% - 4%)."
+    },
+    "riesgo": {
+      "definition": "El riesgo en inversiones es la posibilidad de perder dinero o no obtener la rentabilidad esperada.",
+      "explanation": "No existe inversión sin riesgo. Generalmente, mayor rentabilidad potencial significa mayor riesgo. Es importante entender y estar cómodo con el nivel de riesgo de cada inversión antes de invertir.",
+      "example": "Los CDTs tienen bajo riesgo pero rentabilidad limitada, mientras que las acciones tienen mayor riesgo pero potencial de ganancias más altas."
+    }
+  },
+  "categories": {
+    "presupuesto": [
+      "ingresos", "gastos", "ahorro", "presupuesto", "flujo de caja", "planificacion financiera"
+    ],
+    "inversiones": [
+      "cdt", "tes", "acciones", "bonos", "fincaraiz", "diversificacion", "rentabilidad", "riesgo"
+    ],
+    "conceptos": [
+      "liquidez", "inflacion", "interes compuesto", "capital", "dividendos", "plusvalia"
+    ],
+    "mercados": [
+      "bolsa de valores", "mercado primario", "mercado secundario", "volatilidad", "spread"
+    ]
+  }
+}

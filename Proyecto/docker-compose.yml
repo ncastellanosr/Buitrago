@@ -19,7 +19,7 @@ services:
       - '3306'
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./initdb:/docker-entrypoint-initdb.d:ro #para ejecutar la base de datos en el archivo .sql que está en initdb
+      - ./Backend/initdb:/docker-entrypoint-initdb.d:ro #para ejecutar la base de datos en el archivo .sql que está en initdb
     #  - /c/docker/shared:/usr/shared
   app: #para correr node.js en docker y no tener que instalarlo localmente (pero faltan dependencias y librerias vida malparida)
     build: 

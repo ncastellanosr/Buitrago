@@ -1,0 +1,21 @@
+Comandos
+
+Ejecutar el servidor:
+
+	npx ts-node src/server.ts
+
+Para hacer un register:
+
+	curl.exe -X POST http://localhost:3000/auth/register -H "Content-Type: application/json" -d '{"email":"test@example.com","password":"12345","name":"Tester"}'
+
+Para hacer un login:
+
+	$response = Invoke-WebRequest -Uri "http://localhost:3000/auth/login" -Method POST -Headers @{ "Content-Type" = "application/json" } -Body '{"email":"test@example.com","password":"12345"}'
+
+	$response.Content
+
+Toca de esa forma para que el segundo comando muestre el Token completo
+
+Para verificar un token (obligatorio antes de cada operacion o respuesta del servidor por seguridad)
+
+	Invoke-WebRequest -Uri "http://localhost:3000/auth/me" -Method GET -Headers @{ "Authorization" = "Bearer token"}
