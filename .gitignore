@@ -2,3 +2,6 @@
 .DS_store
 #No quiten esto por nada en el mundo o hay tabla
 .env
+
+#Ignorar módulos de node
+Proyecto/Frontend/node_modules/

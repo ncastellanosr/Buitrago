@@ -1,0 +1,183 @@
+{
+  "expenseCategories": [
+    {
+      "id": "vivienda",
+      "name": "Vivienda",
+      "icon": "home",
+      "color": "#3B82F6",
+      "description": "Arriendo, servicios públicos, mantenimiento",
+      "suggestedPercentage": 30,
+      "subcategories": [
+        "Arriendo o cuota hipotecaria",
+        "Servicios públicos (agua, luz, gas)",
+        "Internet y telefonía",
+        "Administración",
+        "Seguros de hogar",
+        "Mantenimiento y reparaciones"
+      ]
+    },
+    {
+      "id": "alimentacion",
+      "name": "Alimentación",
+      "icon": "utensils",
+      "color": "#10B981",
+      "description": "Mercado, restaurantes, comida",
+      "suggestedPercentage": 20,
+      "subcategories": [
+        "Mercado y despensa",
+        "Restaurantes",
+        "Comidas rápidas",
+        "Bebidas",
+        "Comida en el trabajo"
+      ]
+    },
+    {
+      "id": "transporte",
+      "name": "Transporte",
+      "icon": "car",
+      "color": "#F59E0B",
+      "description": "Combustible, transporte público, mantenimiento",
+      "suggestedPercentage": 15,
+      "subcategories": [
+        "Combustible",
+        "Transporte público",
+        "Mantenimiento de vehículo",
+        "SOAT y seguros",
+        "Parqueaderos",
+        "Uber/Taxi"
+      ]
+    },
+    {
+      "id": "salud",
+      "name": "Salud",
+      "icon": "heart",
+      "color": "#EF4444",
+      "description": "Medicina prepagada, medicamentos, citas",
+      "suggestedPercentage": 10,
+      "subcategories": [
+        "Medicina prepagada",
+        "Medicamentos",
+        "Citas médicas privadas",
+        "Odontología",
+        "Óptica",
+        "Vitaminas y suplementos"
+      ]
+    },
+    {
+      "id": "entretenimiento",
+      "name": "Entretenimiento",
+      "icon": "tv",
+      "color": "#8B5CF6",
+      "description": "Ocio, deportes, suscripciones",
+      "suggestedPercentage": 10,
+      "subcategories": [
+        "Cine y teatro",
+        "Streaming (Netflix, Spotify)",
+        "Gimnasio",
+        "Viajes y turismo",
+        "Bares y discotecas",
+        "Hobbies"
+      ]
+    },
+    {
+      "id": "educacion",
+      "name": "Educación",
+      "icon": "book",
+      "color": "#06B6D4",
+      "description": "Cursos, libros, formación",
+      "suggestedPercentage": 5,
+      "subcategories": [
+        "Cursos y capacitaciones",
+        "Libros",
+        "Plataformas educativas online",
+        "Idiomas",
+        "Certificaciones profesionales"
+      ]
+    },
+    {
+      "id": "ropa",
+      "name": "Ropa y Cuidado Personal",
+      "icon": "shirt",
+      "color": "#EC4899",
+      "description": "Vestimenta, peluquería, cosméticos",
+      "suggestedPercentage": 5,
+      "subcategories": [
+        "Ropa y calzado",
+        "Peluquería y barbería",
+        "Cosméticos y cuidado personal",
+        "Perfumes",
+        "Accesorios"
+      ]
+    },
+    {
+      "id": "otros",
+      "name": "Otros Gastos",
+      "icon": "more-horizontal",
+      "color": "#6B7280",
+      "description": "Gastos varios e imprevistos",
+      "suggestedPercentage": 5,
+      "subcategories": [
+        "Regalos",
+        "Donaciones",
+        "Gastos bancarios",
+        "Impuestos",
+        "Emergencias",
+        "Mascotas"
+      ]
+    }
+  ],
+  "incomeCategories": [
+    {
+      "id": "salario",
+      "name": "Salario Principal",
+      "icon": "briefcase",
+      "color": "#059669"
+    },
+    {
+      "id": "freelance",
+      "name": "Trabajo Independiente",
+      "icon": "laptop",
+      "color": "#7C3AED"
+    },
+    {
+      "id": "inversiones",
+      "name": "Rendimientos de Inversiones",
+      "icon": "trending-up",
+      "color": "#DC2626"
+    },
+    {
+      "id": "alquiler",
+      "name": "Ingresos por Alquiler",
+      "icon": "home",
+      "color": "#2563EB"
+    },
+    {
+      "id": "otros-ingresos",
+      "name": "Otros Ingresos",
+      "icon": "plus",
+      "color": "#65A30D"
+    }
+  ],
+  "budgetTips": [
+    {
+      "category": "general",
+      "tip": "Regla 50/30/20: Destina 50% a gastos necesarios, 30% a gustos y 20% a ahorro e inversión.",
+      "priority": "high"
+    },
+    {
+      "category": "ahorro",
+      "tip": "Ahorra automáticamente el día que recibes tu salario, antes de cualquier gasto.",
+      "priority": "high"
+    },
+    {
+      "category": "vivienda",
+      "tip": "Los gastos de vivienda no deberían superar el 30% de tus ingresos netos.",
+      "priority": "medium"
+    },
+    {
+      "category": "emergencias",
+      "tip": "Mantén un fondo de emergencia equivalente a 3-6 meses de gastos.",
+      "priority": "high"
+    }
+  ]
+}

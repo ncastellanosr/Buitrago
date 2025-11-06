@@ -1,0 +1,122 @@
+{
+  "cdts": [
+    {
+      "id": "cdt-bancolombia",
+      "bank": "Bancolombia",
+      "interestRate": 12.5,
+      "term": 90,
+      "minimumAmount": 500000,
+      "description": "CDT a 90 días con tasa competitiva y respaldo de uno de los bancos más sólidos de Colombia.",
+      "advantages": ["Alta seguridad", "Tasa fija garantizada", "Liquidez al vencimiento"],
+      "disadvantages": ["No disponible antes del vencimiento", "Requiere monto mínimo alto"]
+    },
+    {
+      "id": "cdt-bbva",
+      "bank": "BBVA Colombia",
+      "interestRate": 11.8,
+      "term": 180,
+      "minimumAmount": 300000,
+      "description": "CDT a 180 días ideal para inversionistas que buscan rentabilidad con seguridad.",
+      "advantages": ["Menor monto mínimo", "Banco internacional", "Buena rentabilidad"],
+      "disadvantages": ["Plazo más largo", "Tasa sujeta a condiciones del mercado"]
+    },
+    {
+      "id": "cdt-davivienda",
+      "bank": "Davivienda",
+      "interestRate": 12.2,
+      "term": 365,
+      "minimumAmount": 1000000,
+      "description": "CDT a 1 año para maximizar rentabilidad a largo plazo.",
+      "advantages": ["Mayor rentabilidad anual", "Banco nacional confiable", "Excelente servicio"],
+      "disadvantages": ["Monto mínimo elevado", "Largo plazo de inmovilización"]
+    }
+  ],
+  "bonds": [
+    {
+      "id": "tes-2027",
+      "name": "TES 2027",
+      "type": "Bono del Gobierno",
+      "yield": 9.8,
+      "maturity": "2027-07-24",
+      "minimumAmount": 116000,
+      "description": "Títulos de Tesorería del Gobierno Colombiano con vencimiento 2027.",
+      "advantages": ["Respaldo del Estado", "Liquidez en mercado secundario", "Rendimiento atractivo"],
+      "disadvantages": ["Riesgo de tasa de interés", "Requiere conocimiento del mercado"]
+    },
+    {
+      "id": "bono-corporativo-ecopetrol",
+      "name": "Bono Ecopetrol 2026",
+      "type": "Bono Corporativo",
+      "yield": 8.5,
+      "maturity": "2026-03-15",
+      "minimumAmount": 500000,
+      "description": "Bono corporativo de Ecopetrol, empresa petrolera líder en Colombia.",
+      "advantages": ["Empresa sólida", "Buen rendimiento", "Sector estratégico"],
+      "disadvantages": ["Riesgo corporativo", "Dependiente del precio del petróleo"]
+    }
+  ],
+  "realEstate": [
+    {
+      "id": "apartamento-chapinero",
+      "type": "Apartamento",
+      "location": "Chapinero, Bogotá",
+      "averagePrice": 450000000,
+      "pricePerM2": 6500000,
+      "expectedReturn": 5.2,
+      "description": "Inversión en apartamentos en zona valorizada de Bogotá con alta demanda de alquiler.",
+      "advantages": ["Zona valorizada", "Alta demanda de arriendo", "Plusvalía constante"],
+      "disadvantages": ["Inversión inicial alta", "Gastos de administración", "Illiquidez"]
+    },
+    {
+      "id": "casa-medellin",
+      "type": "Casa",
+      "location": "El Poblado, Medellín",
+      "averagePrice": 650000000,
+      "pricePerM2": 7200000,
+      "expectedReturn": 4.8,
+      "description": "Casas en El Poblado, sector premium de Medellín con excelente proyección.",
+      "advantages": ["Ubicación premium", "Buena plusvalía", "Sector en crecimiento"],
+      "disadvantages": ["Precio elevado", "Mantenimiento costoso", "Tiempo de venta largo"]
+    },
+    {
+      "id": "local-comercial",
+      "type": "Local Comercial",
+      "location": "Centro, Cartagena",
+      "averagePrice": 280000000,
+      "pricePerM2": 4500000,
+      "expectedReturn": 6.5,
+      "description": "Locales comerciales en zona turística con alta rentabilidad por alquiler.",
+      "advantages": ["Alta rentabilidad", "Zona turística", "Demanda constante"],
+      "disadvantages": ["Estacionalidad turística", "Dependiente del comercio", "Riesgo de vacancia"]
+    }
+  ],
+  "stocks": [
+    {
+      "symbol": "ECOPETROL.BO",
+      "name": "Ecopetrol S.A.",
+      "sector": "Energía",
+      "description": "Empresa petrolera más grande de Colombia, líder en exploración y producción.",
+      "riskLevel": "Medio",
+      "advantages": ["Líder del sector", "Dividendos atractivos", "Respaldo estatal"],
+      "disadvantages": ["Dependiente del precio del petróleo", "Riesgo regulatorio"]
+    },
+    {
+      "symbol": "GRUPOARGOS.BO",
+      "name": "Grupo Argos S.A.",
+      "sector": "Materiales",
+      "description": "Holding de inversiones con participación en cemento, energía e infraestructura.",
+      "riskLevel": "Medio",
+      "advantages": ["Diversificación sectorial", "Presencia regional", "Sólida administración"],
+      "disadvantages": ["Exposición a ciclos económicos", "Complejidad del holding"]
+    },
+    {
+      "symbol": "BANCOLOMBIA.BO",
+      "name": "Bancolombia S.A.",
+      "sector": "Financiero",
+      "description": "Principal grupo financiero de Colombia con amplia red de servicios.",
+      "riskLevel": "Bajo-Medio",
+      "advantages": ["Líder del sector financiero", "Diversificación geográfica", "Tecnología avanzada"],
+      "disadvantages": ["Riesgo crediticio", "Regulación bancaria estricta"]
+    }
+  ]
+}
