@@ -16,7 +16,7 @@ export class Database {
           host: "localhost",
           port: 3306,
           username: "root",
-          password: "1234",
+          password: "123456",
           database: "ubudget_database",
           dropSchema: true,
           synchronize: true, // Quitar cuando terminemos el desarrollo

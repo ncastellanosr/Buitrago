@@ -7,6 +7,9 @@ interface AppState {
   educationalContent: EducationalContent | null;
   selectedText: string;
   showAssistant: boolean;
+  isAuthenticated: boolean;
+  showHomePage: boolean;
+  currentAuthView: 'home' | 'login' | 'register' | 'forgot-password';
   userFinancials?: {
     ingresos: number;
     gastos: number;
@@ -16,7 +19,7 @@ interface AppState {
 }
 
 interface AppAction {
-  type: 'SET_VIEW' | 'UPDATE_BUDGET' | 'SET_EDUCATIONAL_CONTENT' | 'SET_SELECTED_TEXT' | 'TOGGLE_ASSISTANT' | 'ADD_INCOME' | 'ADD_EXPENSE' | 'REMOVE_INCOME' | 'REMOVE_EXPENSE' | 'SET_RISK_PROFILE';
+  type: 'SET_VIEW' | 'UPDATE_BUDGET' | 'SET_EDUCATIONAL_CONTENT' | 'SET_SELECTED_TEXT' | 'TOGGLE_ASSISTANT' | 'ADD_INCOME' | 'ADD_EXPENSE' | 'REMOVE_INCOME' | 'REMOVE_EXPENSE' | 'SET_RISK_PROFILE' | 'SET_AUTHENTICATED' | 'SET_SHOW_HOME_PAGE' | 'SET_AUTH_VIEW';
   payload?: any;
 }
 
@@ -33,6 +36,9 @@ const initialState: AppState = {
   educationalContent: null,
   selectedText: '',
   showAssistant: false,
+  isAuthenticated: false,
+  showHomePage: true,
+  currentAuthView: 'home',
   userFinancials: {
     ingresos: 0,
     gastos: 0,
@@ -146,6 +152,15 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
           perfilRiesgo: action.payload,
         }
       };
+    
+    case 'SET_AUTHENTICATED':
+      return { ...state, isAuthenticated: action.payload };
+    
+    case 'SET_SHOW_HOME_PAGE':
+      return { ...state, showHomePage: action.payload };
+    
+    case 'SET_AUTH_VIEW':
+      return { ...state, currentAuthView: action.payload };
     
     default:
       return state;

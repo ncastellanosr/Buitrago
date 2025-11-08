@@ -8,11 +8,26 @@ import Investments from './components/Investments';
 import StockPrices from './components/StockPrices';
 import FinancialNews from './components/FinancialNews';
 import EducationalAssistant from './components/EducationalAssistant';
+import HomePage from './components/HomePage';
+import RegistrationForm from './components/RegistrationForm';
+import LoginForm from './components/LoginForm';
 import './App.css'
 import { Bot, X } from 'lucide-react';
 
 const AppContent: React.FC = () => {
   const { state, dispatch, showChat, setShowChat } = useApp();
+
+  // Flow de autenticación
+  if (!state.isAuthenticated) {
+    if (state.currentAuthView === 'register') {
+      return <RegistrationForm />;
+    }
+    if (state.currentAuthView === 'login') {
+      return <LoginForm />;
+    }
+    // Por defecto retorna la página de inicio
+    return <HomePage />;
+  }
 
   // Detectar selección de texto para el asistente educativo
   useEffect(() => {
