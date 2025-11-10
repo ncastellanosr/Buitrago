@@ -42,7 +42,7 @@ export async function register(req: Request, res: Response) {
     return res.status(201).json({
       message: "User registered successfully.",
       user: {
-        id: newUser.userId,
+        id: newUser.id,
         email: newUser.email,
         name: newUser.name,
       },
@@ -76,7 +76,7 @@ export async function login(req: Request, res: Response) {
 
     // Generate JWT
     const token = jwt.sign(
-      { userId: user.userId, email: user.email, role: user.role },
+      { userId: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET as string,
       { expiresIn: "1h" }
     );
@@ -86,7 +86,7 @@ export async function login(req: Request, res: Response) {
       message: "Login successful.",
       token,
       user: {
-        id: user.userId,
+        id: user.id,
         email: user.email,
         name: user.name,
       },
