@@ -20,7 +20,3 @@ El mundo de las finanzas es un ámbito extenso y lleno de detalles, lo cual pued
 - *MySQL:* Buitrago/
 - *Front:* Buitrago/Proyecto/
 - *Back:* Buitrago/Proyecto/Backend/
-
-
-## 🖼️ Logo
-<img width="550" height="556" alt="logo-Rocky" src="Proyecto/Assets/logo_UBudget_sin_fondo.png" />
