@@ -13,7 +13,7 @@ import { PreferenciaNoticia } from "./entities/PreferenciaNoticia";
 import { Reminder } from "./entities/Reminder";
 import { SimulacionFinanciera } from "./entities/SimulacionFinanciera";
 import { TransactionTbl } from "./entities/TransactionTbl";
-dotenv.config();
+dotenv.config({ override:true});
 
 export class Database {
   private static _instance: DataSource | null = null;
@@ -25,8 +25,8 @@ export class Database {
       Database._instance = new DataSource(
         {
           type: "mysql",
-          host: "localhost",
-          port: 3306,
+          host: process.env.HOST,
+          port: Number(process.env.PORT),
           username: process.env.USERNAME,
           password: process.env.PASSWORD,
           database: process.env.DATABASE,
