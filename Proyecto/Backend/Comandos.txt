@@ -19,3 +19,23 @@ Toca de esa forma para que el segundo comando muestre el Token completo
 Para verificar un token (obligatorio antes de cada operacion o respuesta del servidor por seguridad)
 
 	Invoke-WebRequest -Uri "http://localhost:3000/auth/me" -Method GET -Headers @{ "Authorization" = "Bearer token"}
+
+
+MAC/LINUX STYLE: (no respondo por windows :v)
+
+REGISTRO:
+curl -X POST http://localhost:3000/auth/register -H "Content-Type: application/json" -d '{"email":"test@example.com","password":"Mano12345","name":"Tester"}'
+
+LOGIN:
+Instala jq si hace falta y ejecuta:
+brew install jq
+token=$(curl -s -X POST "http://localhost:3000/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"Mano1234567"}' | jq -r '.token')
+token queda guardado en la variable token, para recuperarlo usar el comando a continuación.
+
+GET TOKEN:
+curl -s -H "Authorization: Bearer $token" "http://localhost:3000/auth/me"
+
+CHANGE PASSWORD:
+curl -X POST http://localhost:3000/auth/changePassword -H "Content-Type: application/json" -d '{"email":"test@example.com","newPassword":"Mano1234567"}'
