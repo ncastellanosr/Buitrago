@@ -11,6 +11,7 @@ import EducationalAssistant from './components/EducationalAssistant';
 import HomePage from './components/HomePage';
 import RegistrationForm from './components/RegistrationForm';
 import LoginForm from './components/LoginForm';
+import Calculadora from './components/Calculadora';
 import './App.css'
 import { Bot, X } from 'lucide-react';
 
@@ -52,6 +53,8 @@ const AppContent: React.FC = () => {
     switch (state.currentView) {
       case 'budget':
         return <BudgetCalculator />;
+      case 'calculadora':
+        return <Calculadora />;
       case 'investments':
         return <Investments />;
       case 'stocks':

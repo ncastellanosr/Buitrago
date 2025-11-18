@@ -34,6 +34,12 @@ const menuItems: MenuItem[] = [
     description: 'Administra tus ingresos y gastos'
   },
   {
+    id: 'calculadora',
+    label: 'Calculadora',
+    icon: Calculator,
+    description: 'Líneas de crédito y CDTs'
+  },
+  {
     id: 'investments',
     label: 'Opciones de Inversión',
     icon: PiggyBank,
