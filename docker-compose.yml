@@ -14,7 +14,7 @@ services:
     env_file:
       - ./llave.env
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
       - ./Backend/initdb:/docker-entrypoint-initdb.d:ro #para ejecutar la base de datos en el archivo .sql que está en initdb
