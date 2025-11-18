@@ -1,42 +1,51 @@
 @echo off
 setlocal enabledelayedexpansion
 
-REM levantar el servicio de docker y mysql 
-REM los datos que se muestran a continuación son los defacto en el docker-compose.yml, no cambiar en el archivo .yml o Fzta
-set "MYSQL_CONTAINER=mysql-5.7"
-set "MYSQL_ROOT_PASSWORD=UNAL0987"
-set "MYSQL_USER=admin"
-set "MYSQL_PASSWORD=UNAL1234"
-set "MYSQL_DATABASE=UBudget_db"
+REM Revisar archivos .env antes de inicializar el docker.
+set llave=1
 
-REM Verficar archivo SQL (to do, conectar base de datos aquí)
-if "%~1"=="" (
-  set "SQL_FILE=init.sql"
+:verificar_llaves
+if exist "llave.env" (
+    echo llave docker encontrada
 ) else (
-  set "SQL_FILE=%~1"
+    set llave=0
+    echo no se encontró la llave del docker, ubicar en Buitrago/.
 )
-REM Llamamos a docker compose para incializar la imagen de MYSQL
-docker-compose up -d
 
-echo Esperando a que MySQL esté listo...
-:wait_mysql
-REM Ejecutar base de datos
-docker exec -i "%MYSQL_CONTAINER%" mysqladmin ping -h 127.0.0.1 -uroot -p"%MYSQL_ROOT_PASSWORD%" --silent >nul 2>&1
-if errorlevel 1 (
-  timeout /t 1 >nul
-  goto wait_mysql
-)
-echo MySQL listo.
-REM Importar SQL si existe
-if exist "%SQL_FILE%" (
-  echo Importando %SQL_FILE% en %MYSQL_DATABASE%...
-  type "%SQL_FILE%" | docker exec -i "%MYSQL_CONTAINER%" mysql -u"%MYSQL_USER%" -p"%MYSQL_PASSWORD%" "%MYSQL_DATABASE%"
-  echo Importación completa.
+if exist "Proyecto\Backend\.env" (
+    echo llave TypeORM encontrada
 ) else (
-  echo No se encontro %SQL_FILE%. Omitiendo import.
+    set llave=0
+    echo no se encontró la llave de TypeORM, ubicar en Buitrago\Proyecto\Backend
 )
-REM Instalación de dependencias (En trabajo futuro)
 
-REM Realización de testing (En trabajo futuro)
+if exist "Proyecto\Frontend\.env" (
+    echo llave API encontrada
+) else (
+    set llave=0
+    echo no se encontró la llave del API, ubicar en Buitrago\Proyecto\Frontend
+)
 
-endlocal
+:instalar_dependencias
+if not "!llave!" == "1" (
+    goto :fin_dependencias
+)
+echo Instalando dependencias
+cd Proyecto\Backend
+npm install
+cd ..\Frontend
+npm install
+:fin_dependencias
+
+:iniciar_docker
+if not "!llave!" == "1" (
+    goto :fin_docker
+)
+echo Iniciando docker
+cd ..\..
+docker-compose up
+:fin_docker
+
+REM cd Proyecto
+REM npm install
+REM npm run dev
