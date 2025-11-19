@@ -20,6 +20,11 @@ export enum AccountTypeOptions {
     INVESTMENT = 'investment',
     OTHER = 'other'
 }
+export enum AccountCurrencyOptions {
+    USD = 'USD',
+    COP = 'COP',
+    EUR = 'EUR'
+}
 //Este triple h... jsjsjsjsjsjs pdta: eliminar comentarios xd antes de la entrega final 
 @Index( ["user", "accountType"])
 @Entity('account')
@@ -40,8 +45,12 @@ export class Account {
         default: AccountTypeOptions.OTHER})
     accountType: AccountTypeOptions;
 
-    @Column({type: 'char', length: 3, default: 'USD'})
-    currency: string;
+    @Column({ 
+        name: 'currency', 
+        type: 'enum', 
+        enum: AccountCurrencyOptions, 
+        default: AccountCurrencyOptions.COP})
+    accountCurrency: AccountCurrencyOptions;
 
     @CreateDateColumn({name: 'created_at',  type: 'datetime'})
     createdAt: Date;

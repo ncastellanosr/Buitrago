@@ -80,14 +80,15 @@ export async function login(req: Request, res: Response) {
     if (!valid) {
       return res.status(401).json({ message: "Invalid credentials." });
     }
-
     // Generate JWT
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET as string,
       { expiresIn: "1h" }
-    );
-
+    );    
+    //Update relvar AuthUser
+    user.lastLogin = new Date();
+    await userRepo.save(user);
     // Respond
     return res.json({
       message: "Login successful.",

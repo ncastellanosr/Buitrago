@@ -3,12 +3,14 @@ import express from "express";
 import bodyParser from "body-parser";
 import { AppDataSource } from "./database";
 import authRoutes from "./routes/authRoutes";
+import accountRoutes from "./routes/accountRoutes"
 import { authenticateToken, AuthRequest } from "./authMiddleware";
 
 const app = express();
 app.use(bodyParser.json());
 
 app.use("/auth", authRoutes);
+app.use("/account", accountRoutes);
 
 const PORT = 3000;
 
