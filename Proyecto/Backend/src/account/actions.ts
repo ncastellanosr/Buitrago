@@ -4,11 +4,10 @@ import { Account } from "../entities/Account";
 const accountRepo = AppDataSource.getRepository(Account);
 export interface Actions {
 
-    doAction(user: undefined, account: undefined): void;
+    doAction(user: any, account: any): Promise<void>;
 }
 export class CreateAccount implements Actions {
     public async doAction(user: any, account: any){
-        //create and save account
         const newAccount = accountRepo.create({
             user: user,
             accountName: account.accName,
@@ -25,8 +24,11 @@ export class CreateAccount implements Actions {
 // tengo sueño lo completo más tarde :'c
 export class DeactivateAccount implements Actions {
     public async doAction(user: any, account: any) {
-        const getAccount = await accountRepo.findOne({ where: { user } });
-        // getAccount.isActive = false;
-        // await accountRepo.save(getAccount);
+        const existingAccount = await accountRepo.findOneBy({user:{id:user.id}, accountName: account.accName });
+        if(!existingAccount){
+            return console.log("F no sirvió")
+        }
+        existingAccount.isActive = false;
+        await accountRepo.save(existingAccount);
     }
 }

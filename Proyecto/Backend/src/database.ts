@@ -33,6 +33,7 @@ export class Database {
           dropSchema: true,
           synchronize: true, // Quitar cuando terminemos el desarrollo
           logging: true,
+          charset: 'utf8mb4',
           entities: [
             AuthUser,
             Account,

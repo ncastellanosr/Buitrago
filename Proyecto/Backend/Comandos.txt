@@ -24,7 +24,7 @@ Para verificar un token (obligatorio antes de cada operacion o respuesta del ser
 MAC/LINUX STYLE: (no respondo por windows :v)
 
 REGISTRO:
-curl -X POST http://localhost:3000/auth/register -H "Content-Type: application/json" -d '{"email":"test@example.com","password":"Mano12345","name":"Tester"}'
+curl -X POST http://localhost:3000/auth/register -H "Content-Type: application/json" -d '{"email":"test@example.com","password":"Mano12345","name":"Testérñ"}'
 
 LOGIN:
 Instala jq si hace falta y ejecuta:
@@ -42,3 +42,6 @@ curl -X POST http://localhost:3000/auth/changePassword -H "Content-Type: applica
 
 NEW ACCOUNT:
 curl -X POST http://localhost:3000/account/create -H "Content-Type: application/json" -d '{"email":"test@example.com","accName":"Ahorros","type":"savings","currency":"COP","balance":"1000.55"}'
+
+DEACTIVATE ACCOUNT:email, accName, isActive
+curl -X POST http://localhost:3000/account/deactivate -H "Content-Type: application/json" -d '{"email":"test@example.com","accName":"Ahorros"}'

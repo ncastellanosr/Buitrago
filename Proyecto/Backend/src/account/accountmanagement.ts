@@ -15,7 +15,7 @@ export class AccountManagement {
         this.action = setAction;
     }
     //nombre tan paila
-    public manageAccount(user?: any, newAccount?: any) {
+    public manageAccount(user: any, newAccount?: any) {
         return this.action.doAction(user, newAccount);
     }
 }
