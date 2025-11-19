@@ -1,8 +1,8 @@
 import React from 'react';
-import { 
-  DollarSign, 
-  TrendingUp, 
-  TrendingDown, 
+import {
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
   PieChart,
   ArrowRight,
   Calculator,
@@ -26,37 +26,6 @@ const Dashboard: React.FC = () => {
     }).format(amount);
   };
 
-  const quickActions = [
-    {
-      title: 'Calcular Presupuesto',
-      description: 'Administra tus ingresos y gastos mensuales',
-      icon: Calculator,
-      action: () => dispatch({ type: 'SET_VIEW', payload: 'budget' }),
-      color: 'bg-blue-500'
-    },
-    {
-      title: 'Ver Inversiones',
-      description: 'Explora CDTs, acciones y bonos',
-      icon: TrendingUp,
-      action: () => dispatch({ type: 'SET_VIEW', payload: 'investments' }),
-      color: 'bg-green-500'
-    },
-    {
-      title: 'Precios de Acciones',
-      description: 'Cotizaciones en tiempo real',
-      icon: LineChart,
-      action: () => dispatch({ type: 'SET_VIEW', payload: 'stocks' }),
-      color: 'bg-purple-500'
-    },
-    {
-      title: 'Noticias Financieras',
-      description: 'Mantente informado del mercado',
-      icon: Newspaper,
-      action: () => dispatch({ type: 'SET_VIEW', payload: 'news' }),
-      color: 'bg-orange-500'
-    }
-  ];
-
   return (
     <div className="space-y-6">
       {/* Header del Dashboard */}
@@ -70,10 +39,10 @@ const Dashboard: React.FC = () => {
         <div className="text-right">
           <p className="text-sm text-gray-500">Última actualización</p>
           <p className="text-sm font-medium text-gray-900">
-            {new Date().toLocaleDateString('es-CO', { 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
+            {new Date().toLocaleDateString('es-CO', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
             })}
           </p>
         </div>
@@ -171,7 +140,7 @@ const Dashboard: React.FC = () => {
               {budgetData.availablePercentage > 20 && (
                 <div className="mt-3 p-3 bg-green-50 rounded-lg">
                   <p className="text-sm text-green-700">
-                    ¡Excelente! Tienes más del 20% disponible para ahorro e inversión. 
+                    ¡Excelente! Tienes más del 20% disponible para ahorro e inversión.
                     Considera diversificar en CDTs, acciones y bonos.
                   </p>
                 </div>
@@ -181,43 +150,18 @@ const Dashboard: React.FC = () => {
         </Card>
       )}
 
-      {/* Acciones Rápidas */}
-      <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Acciones Rápidas</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {quickActions.map((action, index) => {
-            const Icon = action.icon;
-            return (
-              <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer group" onClick={action.action}>
-                <CardContent className="p-6">
-                  <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mb-4`}>
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">{action.title}</h3>
-                  <p className="text-sm text-gray-600 mb-4">{action.description}</p>
-                  <div className="flex items-center text-sm text-blue-600 group-hover:text-blue-800">
-                    <span>Comenzar</span>
-                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      </div>
-
       {/* Banner de Educación Financiera */}
-      <Card className="bg-blue-800 text-white">
+      <Card className="bg-gradient-to-r from-green-500 to-blue-500 text-white">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-xl font-semibold mb-2">Educación Financiera</h3>
               <p className="text-blue-100">
-                Selecciona cualquier término financiero en la aplicación para obtener una explicación detallada
+                Selecciona cualquier término financiero en la aplicación para obtener una explicación detallada. O utiliza las habilidades del asistente para analizar empresas.
               </p>
             </div>
-            <Button 
-              variant="secondary" 
+            <Button
+              variant="secondary"
               onClick={() => setShowChat(!showChat)}
               className="bg-white text-blue-600 hover:bg-blue-50"
             >

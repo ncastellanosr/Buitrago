@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { 
-  LayoutDashboard, 
-  Calculator, 
-  TrendingUp, 
-  LineChart, 
+import {
+  LayoutDashboard,
+  Calculator,
+  TrendingUp,
+  LineChart,
   Newspaper,
   HelpCircle,
   Settings,
@@ -25,24 +25,6 @@ const menuItems: MenuItem[] = [
     id: 'dashboard',
     label: 'Dashboard',
     icon: LayoutDashboard,
-    description: 'Resumen general de tus finanzas'
-  },
-  {
-    id: 'budget',
-    label: 'Calculadora de Presupuesto',
-    icon: Calculator,
-    description: 'Administra tus ingresos y gastos'
-  },
-  {
-    id: 'calculadora',
-    label: 'Calculadora',
-    icon: Calculator,
-    description: 'Líneas de crédito y CDTs'
-  },
-  {
-    id: 'investments',
-    label: 'Opciones de Inversión',
-    icon: PiggyBank,
     description: 'CDTs, bonos, finca raíz y más'
   },
   {
@@ -91,15 +73,15 @@ const Sidebar: React.FC = () => {
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = state.currentView === item.id;
-              
+
               return (
                 <Button
                   key={item.id}
                   variant={isActive ? 'default' : 'ghost'}
                   className={cn(
                     'w-full justify-start text-left h-auto p-3',
-                    isActive 
-                      ? 'bg-gradient-to-r from-blue-700 to-cyan-600 text-white shadow-md' 
+                    isActive
+                      ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md'
                       : 'hover:bg-blue-50'
                   )}
                   onClick={() => dispatch({ type: 'SET_VIEW', payload: item.id })}
@@ -147,7 +129,7 @@ const Sidebar: React.FC = () => {
           <div className="mt-8 p-4 bg-gradient-to-r from-blue-50 to-blue-50 rounded-lg border border-blue-200">
             <h4 className="text-sm font-medium text-blue-900 mb-2">💡 Tip Financiero</h4>
             <p className="text-xs text-blue-700">
-              Diversifica tus inversiones: no pongas todos los huevos en la misma canasta. 
+              Diversifica tus inversiones: no pongas todos los huevos en la misma canasta.
               Combina CDTs, acciones y bonos según tu perfil de riesgo.
             </p>
           </div>
