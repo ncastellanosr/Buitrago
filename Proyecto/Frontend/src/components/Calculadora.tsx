@@ -15,9 +15,22 @@ const Calculadora: React.FC = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto space-y-4">
-      <Button className="w-full" onClick={() => setView('linea')}>Calcular líneas de crédito</Button>
-      <Button className="w-full" variant="outline" onClick={() => setView('cdt')}>Calcular CDT's</Button>
+    <div className="max-w-4xl mx-auto px-8">
+      <div className="grid grid-cols-2 gap-6">
+        <Button
+          className="h-48 text-xl font-semibold hover:scale-105 transition-transform"
+          onClick={() => setView('linea')}
+        >
+          Calcular líneas de crédito
+        </Button>
+        <Button
+          className="h-48 text-xl font-semibold hover:scale-105 transition-transform"
+          variant="outline"
+          onClick={() => setView('cdt')}
+        >
+          Calcular CDT's
+        </Button>
+      </div>
     </div>
   );
 };
