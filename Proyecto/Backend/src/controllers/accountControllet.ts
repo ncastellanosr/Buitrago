@@ -3,13 +3,13 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { AppDataSource } from "../database";
 import { AuthUser } from "../entities/AuthUser";
-import { accountVerification } from "../verification/accVerification";
+import { accountVerification, createAccountNumber } from "../verification/accVerification";
 import { AccountManagement } from "../account/accountmanagement";
 import { CreateAccount, DeactivateAccount } from "../account/actions";
-import { Account } from "../entities/Account";
+import { Account, AccountTypeOptions } from "../entities/Account";
 // import bcrypt from "bcrypt";
 dotenv.config();
-
+//Arquitectura Strategy, es mi primera vez aplicándola (no me funen :c)
 export async function createAcc(req: Request, res: Response){
     try{
         const userRepo = AppDataSource.getRepository(AuthUser);
@@ -25,9 +25,10 @@ export async function createAcc(req: Request, res: Response){
         if (!accountVerification(accName,balance)) {
             return res.status(400).json({ message: "Datos incompletos, inserción abortade."})
         }
+        const accountUUID = createAccountNumber(type);
         const accountManager = new AccountManagement(new CreateAccount());
-        accountManager.manageAccount(user.id,{accName,type,currency,balance});
-        return res.status(201).json({message: "Account registered successfully."});
+        accountManager.manageAccount(user.id,{accName,type,accountUUID,currency,balance}); 
+        return res.status(201).json({message: "Account registered successfully.", accountUUID:accountUUID});
     } catch (err) {
         console.error("Fail, not able to manage account:", err);
         return res.status(500).json({ message: "Internal server error." });

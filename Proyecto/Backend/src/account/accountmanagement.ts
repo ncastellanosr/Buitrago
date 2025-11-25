@@ -3,7 +3,7 @@ import {AccountTypeOptions} from "../entities/Account";
 import { AuthUser } from "../entities/AuthUser";
 export class AccountManagement {
     /**
-     * @type {Action} Acciones que puede realizar un usario en la cuenta.
+     * @type {Actions} Acciones que puede realizar un usario en la cuenta.
      */
     private action: Actions;
     // acción por default sería crear la cuenta del usuario

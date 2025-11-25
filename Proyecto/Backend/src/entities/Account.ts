@@ -13,12 +13,12 @@ import { Reminder } from "./Reminder";
 
 // Tipos de cuenta
 export enum AccountTypeOptions {
-    CASH = 'cash',
-    SAVINGS = 'savings',
-    CHECKING = 'checking',
-    CREDIT_CART = 'credit_cart',
-    INVESTMENT = 'investment',
-    OTHER = 'other'
+    CASH = 'CASH',
+    SAVINGS = 'SAVINGS',
+    CHECKING = 'CHECKING',
+    CREDIT_CART = 'CREDIT_CART',
+    INVESTMENT = 'INVESTMENT',
+    OTHER = 'OTHER'
 }
 export enum AccountCurrencyOptions {
     USD = 'USD',
@@ -37,6 +37,9 @@ export class Account {
 
     @Column({name: 'account_name', type: 'varchar', length: 150})
     accountName: string;
+
+    @Column({ name: 'account_token', type: 'varchar', length: 255})
+    accountNumber: string;
 
     @Column({ 
         name: 'type', 
@@ -63,6 +66,10 @@ export class Account {
 
     @OneToMany(() => TransactionTbl, (transactionTbl) => transactionTbl.account )
     transaction: TransactionTbl[]
+
+    // inversa para las transacciones donde esta cuenta es 'relatedAccount'
+    @OneToMany(() => TransactionTbl, (transactionTbl) => transactionTbl.relatedAccount)
+    relatedTransactions: TransactionTbl[]
 
     @OneToMany(() => Reminder, (reminder) => reminder.account)
     reminder: Reminder[]

@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import { AppDataSource } from "./database";
 import authRoutes from "./routes/authRoutes";
 import accountRoutes from "./routes/accountRoutes"
+import transactionRoutes from "./routes/transactionRoutes"
 import { authenticateToken, AuthRequest } from "./authMiddleware";
 
 const app = express();
@@ -11,6 +12,7 @@ app.use(bodyParser.json());
 
 app.use("/auth", authRoutes);
 app.use("/account", accountRoutes);
+app.use("/transaction", transactionRoutes);
 
 const PORT = 3000;
 

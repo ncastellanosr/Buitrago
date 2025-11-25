@@ -11,10 +11,10 @@ import { TransactionTbl } from "./TransactionTbl";
 import { Budget } from "./Budget";
 
 export enum CategoryTypeOptions {
-    INCOME = 'income',
-    EXPENSE = 'expense',
-    TRANSFER = 'transfer',
-    OTHER='other'
+    INCOME = 'INCOME',
+    EXPENSE = 'EXPENSE',
+    TRANSFER = 'TRANSFER',
+    OTHER='OTHER'
 }
 
 @Entity('category')

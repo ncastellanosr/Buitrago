@@ -12,6 +12,7 @@ export class CreateAccount implements Actions {
             user: user,
             accountName: account.accName,
             accountType: account.type,
+            accountNumber: account.accountUUID,
             accountCurrency: account.currency,
             createdAt: new Date(),
             isActive: true,
@@ -19,7 +20,6 @@ export class CreateAccount implements Actions {
         });
         await accountRepo.save(newAccount);
     }
-
 }
 // tengo sueño lo completo más tarde :'c
 export class DeactivateAccount implements Actions {

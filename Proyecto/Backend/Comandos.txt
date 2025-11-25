@@ -41,7 +41,18 @@ CHANGE PASSWORD:
 curl -X POST http://localhost:3000/auth/changePassword -H "Content-Type: application/json" -d '{"email":"test@example.com","newPassword":"Mano1234567"}'
 
 NEW ACCOUNT:
-curl -X POST http://localhost:3000/account/create -H "Content-Type: application/json" -d '{"email":"test@example.com","accName":"Ahorros","type":"savings","currency":"COP","balance":"1000.55"}'
+curl -X POST http://localhost:3000/account/create -H "Content-Type: application/json" -d '{"email":"test@example.com","accName":"Ahorros1","type":"SAVINGS","currency":"COP","balance":"100"}'
+
+NEW ACCOUNT:
+curl -X POST http://localhost:3000/account/create -H "Content-Type: application/json" -d '{"email":"test@example.com","accName":"Ahorros2","type":"SAVINGS","currency":"COP","balance":"100"}'
 
 DEACTIVATE ACCOUNT:email, accName, isActive
 curl -X POST http://localhost:3000/account/deactivate -H "Content-Type: application/json" -d '{"email":"test@example.com","accName":"Ahorros"}'
+
+MAKE TRANSACTION. IMPORTANTE CADA VEZ QUE SE HACE UNACUENTA SE CREA UN NUMERO RANDOM POR LO QUE HAY QUE ACTUALIZAR ESTE COMANDO CON LOS QUE LE BOTE LA TERMINAL
+        	user: string, accountOne:string, accountTwo:string, category:string, action:string, amountOne:string, 
+            amountTwo:string, currency:string, description:string
+curl -X POST http://localhost:3000/transaction/make_transaction \
+-H "Content-Type: application/json" \
+-d '{"user":"1","accountOne":"5502-74dfe3d1-9fda-4d73-9f55-5811b58fd45d","accountTwo":"5502-12b0cdf7-e327-42d8-b4b8-1f9b8ea48a84","category":"EXPENSE","amountOne":"50","amountTwo":"50","currency":"USD","description":"testing"}'
+
