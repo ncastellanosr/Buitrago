@@ -20,11 +20,8 @@ const HomePage: React.FC = () => {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <div className="flex items-center">
-              <div className="w-10 h-10 bg-blue-700 rounded-lg flex items-center justify-center">
-                <DollarSign className="h-6 w-6 text-white" />
-              </div>
-              <span className="ml-3 text-2xl font-bold text-gray-900">UBudget</span>
+            <div>
+              <img src="../../public/images/logo_UBudget2.png" className="h-10 w-auto" alt="Logo" />
             </div>
             <div className="flex space-x-4">
               <Button
@@ -54,7 +51,7 @@ const HomePage: React.FC = () => {
               <span className="text-blue-700"> finanzas</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              UBudget es tu asistente personal para gestionar presupuestos, calcular inversiones y educarte financieramente. 
+              UBudget es tu asistente personal para gestionar presupuestos, calcular inversiones y educarte financieramente.
               Comienza tu viaje hacia la libertad financiera hoy mismo.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -96,7 +93,7 @@ const HomePage: React.FC = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">Calculadora de Presupuesto</h3>
                 <p className="text-gray-600">
-                  Crea y gestiona tu presupuesto mensual con nuestra calculadora intuitiva. 
+                  Crea y gestiona tu presupuesto mensual con nuestra calculadora intuitiva.
                   Visualiza tus gastos y ahorra más cada mes.
                 </p>
               </div>
@@ -107,7 +104,7 @@ const HomePage: React.FC = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">Gestión de Inversiones</h3>
                 <p className="text-gray-600">
-                  Analiza y gestiona tus inversiones. Calcula rendimientos, 
+                  Analiza y gestiona tus inversiones. Calcula rendimientos,
                   diversifica tu portafolio y alcanza tus metas financieras.
                 </p>
               </div>
@@ -118,7 +115,7 @@ const HomePage: React.FC = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">Asistente Educativo</h3>
                 <p className="text-gray-600">
-                  Aprende sobre finanzas personales con nuestros recursos educativos. 
+                  Aprende sobre finanzas personales con nuestros recursos educativos.
                   Conviértete en un experto en gestión financiera.
                 </p>
               </div>
