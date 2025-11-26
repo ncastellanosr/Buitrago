@@ -12,7 +12,7 @@ import { Account } from "../entities/Account";
             return newAmount.toString();
         }
         else{
-            const newAmount = +getAccount.cachedBalance - +secondAmount;
+            const newAmount = +getAccount.cachedBalance - +amount;
             return newAmount.toString();
         }
     }

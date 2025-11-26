@@ -86,28 +86,6 @@ export class DataChecker implements Actions{
 
 }
 
-export class Operation implements Actions {
-    
-    public doAction(user:string,
-            accountOne:string, 
-            accountTwo:string, 
-            category:string, 
-            amountOne:string, 
-            amountTwo:string, 
-            currency:string,
-            description:string,
-            action:string ): string {
-        if(action==='sum'){
-            const amount = +amountOne + +amountTwo;
-            return amount.toString();
-        }
-        else{
-            const amount = +amountOne - +amountTwo;
-            return amount.toString();
-        }
-    }
-}
-
 export class InsertionTransaction implements Actions {
     public async doAction(user:string,
             accountOne:string, 
@@ -121,9 +99,13 @@ export class InsertionTransaction implements Actions {
         const accountRepo = AppDataSource.getRepository(Account);
         const transactionRepo = AppDataSource.getRepository(TransactionTbl);
         const getAccountOne = await accountRepo.findOne({ where: { accountNumber: accountOne } as any});
-        const getAccountTwo = await accountRepo.findOne({ where: { accountNumber: accountTwo } as any});
+        let getAccountTwo = null;
+        if(accountTwo){
+            getAccountTwo = await accountRepo.findOne({ where: { accountNumber: accountTwo } as any});
+            if(!getAccountTwo){throw new Error("Account not found");}
+        }
         const getCategory = await AppDataSource.getRepository(Category).findOne({ where: { name: action } as any});
-        if (!getAccountOne || !getAccountTwo || !getCategory) {
+        if (!getAccountOne || !getCategory) {
             throw new Error("Account or category not found");
         }
         const newTransaction = transactionRepo.create({
@@ -139,5 +121,29 @@ export class InsertionTransaction implements Actions {
             isReconciled: true,
         } as any);
         await transactionRepo.save(newTransaction);
+    }
+}
+
+export class UpdateAccount implements Actions {
+    public async doAction(user:string,
+            accountOne:string, 
+            accountTwo:string, 
+            category:string, 
+            amountOne:string, 
+            amountTwo:string, 
+            currency:string,
+            description:string,
+            action:string ): Promise<void> {
+        const accountRepo = AppDataSource.getRepository(Account);
+        const getAccountOne = await accountRepo.findOne({ where: { accountNumber: accountOne } as any});
+        if (!getAccountOne) { throw new Error("Account not found");}
+        getAccountOne.cachedBalance = (+getAccountOne.cachedBalance - +amountOne);
+        await accountRepo.save(getAccountOne);
+        if(accountTwo){
+            const getAccountTwo = await accountRepo.findOne({ where: { accountNumber: accountTwo } as any});
+            if (!getAccountTwo) { throw new Error("Account not found");}
+            getAccountTwo.cachedBalance = (+getAccountTwo.cachedBalance - +amountTwo);
+            await accountRepo.save(getAccountTwo);
+        }
     }
 }

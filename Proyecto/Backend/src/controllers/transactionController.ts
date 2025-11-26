@@ -5,7 +5,7 @@ import { TransactionTbl } from "../entities/TransactionTbl";
 import { Account } from "../entities/Account";
 import { Operation } from "../verification/transactionVerification";
 import { TransactionManager } from "../transaction/transactionManager";
-import { DataChecker, InsertionTransaction } from "../transaction/actions"
+import { DataChecker, InsertionTransaction, UpdateAccount } from "../transaction/actions"
 import { CreateCategory } from "../transaction/createCategory"
 
 export async function doTransaction(req: Request, res: Response){
@@ -30,8 +30,9 @@ export async function doTransaction(req: Request, res: Response){
         }
         //actualizar balances de las cuentas y totalizar operación.
         const newAmountPrimary = await Operation(accountOne, amountOne,"0", "sub");
+        let newAmountSecondary = "0";
         if(accountTwo){
-            const newAmountSecondary = await Operation(accountTwo, amountTwo, "0", "sub");
+            newAmountSecondary = await Operation(accountTwo, amountTwo, "0", "sub");
         }
         const transactionTotal = await Operation(accountOne, amountOne, amountTwo, "sum");
 
@@ -42,7 +43,12 @@ export async function doTransaction(req: Request, res: Response){
         // //insertion
         accountManager.setAction(new InsertionTransaction());
         await accountManager.manageTransaction(user, accountOne, accountTwo, category, transactionTotal, amountTwo, currency, description, action);
-        return res.status(200).json({ message: "Transaction was successful.", transactionTotal });
+        
+        //update account balances
+        accountManager.setAction(new UpdateAccount());
+        await accountManager.manageTransaction(user, accountOne, accountTwo, category, newAmountPrimary, newAmountSecondary, currency, description, action);
+
+        return res.status(200).json({ message: "Transaction was successful.", newAmountPrimary, newAmountSecondary, transactionTotal });
 
     } catch (err){
         console.error("Fail, not able to manage transaction:", err);

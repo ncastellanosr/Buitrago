@@ -54,5 +54,5 @@ MAKE TRANSACTION. IMPORTANTE CADA VEZ QUE SE HACE UNACUENTA SE CREA UN NUMERO RA
             amountTwo:string, currency:string, description:string
 curl -X POST http://localhost:3000/transaction/make_transaction \
 -H "Content-Type: application/json" \
--d '{"user":"1","accountOne":"5502-74dfe3d1-9fda-4d73-9f55-5811b58fd45d","accountTwo":"5502-12b0cdf7-e327-42d8-b4b8-1f9b8ea48a84","category":"EXPENSE","amountOne":"50","amountTwo":"50","currency":"USD","description":"testing"}'
+-d '{"user":"1","accountOne":"5502-2b0c743c-7e1c-4e88-a6d4-f37adf5579b9","accountTwo":"","category":"EXPENSE","amountOne":"50","amountTwo":"","currency":"USD","description":"testing"}'
 
