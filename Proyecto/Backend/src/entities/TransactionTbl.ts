@@ -5,7 +5,6 @@ import {
   CreateDateColumn,
   Index,
   ManyToOne,
-  OneToOne,
   JoinColumn,
   OneToMany
 } from "typeorm";
@@ -14,9 +13,9 @@ import { Category } from "./Category";
 import { NotificationLog } from "./NotificationLog";
 
 export enum TransactionType {
-    INCONME='income',
-    EXPENSE='expense',
-    TRANSFER='transfer'
+    INCOME='INCOME',
+    EXPENSE='EXPENSE',
+    TRANSFER='TRANSFER'
 }
 
 @Index(["account", "ocurredAt"])
@@ -29,9 +28,9 @@ export class TransactionTbl {
     @ManyToOne(() => Account, (account) => account.transaction, {onDelete: 'CASCADE', nullable:false})
     account: Account
 
-    @OneToOne(() => TransactionTbl,{onDelete: 'SET NULL'})
+    @ManyToOne(() => Account, (account) => account.relatedTransactions, { onDelete: 'SET NULL', nullable: true })
     @JoinColumn()
-    relatedAccount: TransactionTbl
+    relatedAccount: Account
 
     @Index()
     @ManyToOne(() => Category, (category) => category.transaction, {onDelete: 'SET NULL'})
@@ -59,7 +58,7 @@ export class TransactionTbl {
     @CreateDateColumn({ name: 'created_at', type: 'datetime'})
     createdAt: Date;
 
-    @Column({name: 'is_recociled', type: 'boolean', default: false})
+    @Column({name: 'is_reconciled', type: 'boolean', default: false})
     isReconciled: boolean;
 
     @Column({ type: 'json', nullable: true})

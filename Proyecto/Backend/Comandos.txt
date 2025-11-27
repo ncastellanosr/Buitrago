@@ -19,3 +19,50 @@ Toca de esa forma para que el segundo comando muestre el Token completo
 Para verificar un token (obligatorio antes de cada operacion o respuesta del servidor por seguridad)
 
 	Invoke-WebRequest -Uri "http://localhost:3000/auth/me" -Method GET -Headers @{ "Authorization" = "Bearer token"}
+
+
+MAC/LINUX STYLE: (no respondo por windows :v)
+
+REGISTRO:
+curl -X POST http://localhost:3000/auth/register -H "Content-Type: application/json" -d '{"email":"test@example.com","password":"Mano12345","name":"Testérñ"}'
+
+LOGIN:
+Instala jq si hace falta y ejecuta:
+brew install jq
+token=$(curl -s -X POST "http://localhost:3000/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"Mano12345"}' | jq -r '.token')
+token queda guardado en la variable token, para recuperarlo usar el comando a continuación.
+
+GET TOKEN:
+curl -s -H "Authorization: Bearer $token" "http://localhost:3000/auth/me"
+
+CHANGE PASSWORD:
+curl -X POST http://localhost:3000/auth/changePassword -H "Content-Type: application/json" -d '{"email":"test@example.com","newPassword":"Mano1234567"}'
+
+NEW ACCOUNT:
+curl -X POST http://localhost:3000/account/create -H "Content-Type: application/json" -d '{"email":"test@example.com","accName":"Ahorros1","type":"SAVINGS","currency":"COP","balance":"100"}'
+
+NEW ACCOUNT:
+curl -X POST http://localhost:3000/account/create -H "Content-Type: application/json" -d '{"email":"test@example.com","accName":"Ahorros2","type":"SAVINGS","currency":"COP","balance":"100"}'
+
+DEACTIVATE ACCOUNT:email, accName, isActive
+curl -X POST http://localhost:3000/account/deactivate -H "Content-Type: application/json" -d '{"email":"test@example.com","accName":"Ahorros"}'
+
+MAKE TRANSACTION. IMPORTANTE CADA VEZ QUE SE HACE UNACUENTA SE CREA UN NUMERO RANDOM POR LO QUE HAY QUE ACTUALIZAR ESTE COMANDO CON LOS QUE LE BOTE LA TERMINAL
+        	user: string, accountOne:string, accountTwo:string, category:string, action:string, amountOne:string, 
+            amountTwo:string, currency:string, description:string
+curl -X POST http://localhost:3000/transaction/make_transaction \
+-H "Content-Type: application/json" \
+-d '{"user":"1","accountOne":"5502-2b0c743c-7e1c-4e88-a6d4-f37adf5579b9","accountTwo":"","category":"EXPENSE","amountOne":"50","amountTwo":"","currency":"USD","description":"testing"}'
+
+MAKE OBLIGATION / REMINDER
+user, title, amountTotal, amountRemaining, currency, dueDate, frequency, state
+curl -X POST http://localhost:3000/obligation/make_obligation \
+-H "Content-Type: application/json" \
+-d '{"user":"1", "title":"Probando titulo", "amountTotal":"5000", "amountRemaining":"5000", "currency":"USD", "dueDate":"2025-12-28", "frequency":"ONE_TIME", "state":"OPEN"}'
+
+
+curl -X POST http://localhost:3000/obligation/make_reminder \
+-H "Content-Type: application/json" \
+-d '{"user":"1", "title":"Probando titulo", "dueDate":"2025-12-28"}'

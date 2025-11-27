@@ -22,10 +22,10 @@ export class Reminder{
     @ManyToOne(() => AuthUser, (user) => user.reminder, {onDelete: 'CASCADE', nullable:false})
     user: AuthUser
 
-    @ManyToOne(() => Obligation, (obligation) => obligation.reminder, {onDelete: 'SET NULL'})
+    @ManyToOne(() => Obligation, (obligation) => obligation.reminder, {onDelete: 'SET NULL', nullable:true})
     obligation: Obligation
 
-    @ManyToOne(() => Account, (account) => account.reminder, {onDelete: 'SET NULL'})
+    @ManyToOne(() => Account, (account) => account.reminder, {onDelete: 'SET NULL', nullable:true})
     account: Account
 
     @Column({type: 'varchar', length: 200})
