@@ -56,3 +56,13 @@ curl -X POST http://localhost:3000/transaction/make_transaction \
 -H "Content-Type: application/json" \
 -d '{"user":"1","accountOne":"5502-2b0c743c-7e1c-4e88-a6d4-f37adf5579b9","accountTwo":"","category":"EXPENSE","amountOne":"50","amountTwo":"","currency":"USD","description":"testing"}'
 
+MAKE OBLIGATION / REMINDER
+user, title, amountTotal, amountRemaining, currency, dueDate, frequency, state
+curl -X POST http://localhost:3000/obligation/make_obligation \
+-H "Content-Type: application/json" \
+-d '{"user":"1", "title":"Probando titulo", "amountTotal":"5000", "amountRemaining":"5000", "currency":"USD", "dueDate":"2025-12-28", "frequency":"ONE_TIME", "state":"OPEN"}'
+
+
+curl -X POST http://localhost:3000/obligation/make_reminder \
+-H "Content-Type: application/json" \
+-d '{"user":"1", "title":"Probando titulo", "dueDate":"2025-12-28"}'
