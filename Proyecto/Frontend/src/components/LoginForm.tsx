@@ -48,7 +48,7 @@ const LoginForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -58,7 +58,7 @@ const LoginForm: React.FC = () => {
     try {
       // Simular llamada a API
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
+
       // En una aplicación real, aquí se enviarían las credenciales al servidor
       console.log('Credenciales de login:', {
         email: formData.email,
@@ -68,7 +68,7 @@ const LoginForm: React.FC = () => {
       // Simular login exitoso
       dispatch({ type: 'SET_AUTHENTICATED', payload: true });
       dispatch({ type: 'SET_SHOW_HOME_PAGE', payload: false });
-      
+
     } catch (error) {
       alert('Error al iniciar sesión. Por favor verifica tus credenciales.');
     } finally {
@@ -89,11 +89,11 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <div className="w-12 h-12 bg-blue-700 rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 bg-green-700 rounded-lg flex items-center justify-center">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
@@ -185,7 +185,7 @@ const LoginForm: React.FC = () => {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+            className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50"
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center">

@@ -11,6 +11,7 @@ import EducationalAssistant from './components/EducationalAssistant';
 import HomePage from './components/HomePage';
 import RegistrationForm from './components/RegistrationForm';
 import LoginForm from './components/LoginForm';
+import Calculadora from './components/Calculadora';
 import './App.css'
 import { Bot, X } from 'lucide-react';
 
@@ -36,7 +37,7 @@ const AppContent: React.FC = () => {
       if (selection && selection.toString().trim().length > 0) {
         const selectedText = selection.toString().trim().toLowerCase();
         dispatch({ type: 'SET_SELECTED_TEXT', payload: selectedText });
-        
+
         // Verificar si el texto seleccionado es un término financiero
         if (state.educationalContent?.terms[selectedText]) {
           dispatch({ type: 'TOGGLE_ASSISTANT' });
@@ -52,6 +53,8 @@ const AppContent: React.FC = () => {
     switch (state.currentView) {
       case 'budget':
         return <BudgetCalculator />;
+      case 'calculadora':
+        return <Calculadora />;
       case 'investments':
         return <Investments />;
       case 'stocks':
@@ -73,7 +76,7 @@ const AppContent: React.FC = () => {
         </main>
       </div>
       {state.showAssistant && (
-        <EducationalAssistant 
+        <EducationalAssistant
           selectedText={state.selectedText}
           onClose={() => dispatch({ type: 'TOGGLE_ASSISTANT' })}
         />
@@ -82,7 +85,7 @@ const AppContent: React.FC = () => {
         className="fixed bottom-4 right-4 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition z-40"
         onClick={() => setShowChat(!showChat)}
       >
-        { showChat ? (<X />) : (<Bot />) }
+        {showChat ? (<X />) : (<Bot />)}
       </button>
       <div className={`fixed bottom-20 right-4 z-50${showChat ? '' : ' hidden'}`}>
         <iframe

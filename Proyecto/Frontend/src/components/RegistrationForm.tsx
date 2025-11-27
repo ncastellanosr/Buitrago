@@ -25,7 +25,7 @@ const RegistrationForm: React.FC = () => {
 
   const validatePassword = (password: string): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
-    
+
     if (password.length < 8) {
       errors.push('Al menos 8 caracteres');
     }
@@ -41,7 +41,7 @@ const RegistrationForm: React.FC = () => {
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
       errors.push('Un carácter especial');
     }
-    
+
     return { isValid: errors.length === 0, errors };
   };
 
@@ -96,7 +96,7 @@ const RegistrationForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -106,7 +106,7 @@ const RegistrationForm: React.FC = () => {
     try {
       // Simular llamada a API
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       // En una aplicación real, aquí se enviarían los datos al servidor
       console.log('Datos de registro:', {
         nombre: formData.nombre,
@@ -116,7 +116,7 @@ const RegistrationForm: React.FC = () => {
 
       // Mostrar mensaje de éxito
       alert('¡Registro exitoso! Por favor revisa tu correo para confirmar tu cuenta.');
-      
+
       // Redirigir al login
       dispatch({ type: 'SET_AUTH_VIEW', payload: 'login' });
     } catch (error) {
@@ -131,11 +131,11 @@ const RegistrationForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <div className="w-12 h-12 bg-blue-700 rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 bg-green-700 rounded-lg flex items-center justify-center">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
@@ -295,7 +295,7 @@ const RegistrationForm: React.FC = () => {
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+            className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50"
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center">
