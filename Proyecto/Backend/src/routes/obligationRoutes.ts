@@ -3,7 +3,7 @@ import { doObligation, doReminder } from "../controllers/obligationController";
 
 const router = Router();
 
-router.post("/make_obligation", doObligation);
-router.post("/make_reminder", doReminder);
+router.post("/new", doObligation);
+router.post("/reminder", doReminder);
 
 export default router;

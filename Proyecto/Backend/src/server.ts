@@ -1,5 +1,6 @@
+import express from 'express';
+import cors from 'cors';
 import "reflect-metadata";
-import express from "express";
 import bodyParser from "body-parser";
 import { AppDataSource } from "./database";
 import authRoutes from "./routes/authRoutes";
@@ -10,6 +11,12 @@ import { authenticateToken, AuthRequest } from "./authMiddleware";
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors({
+  origin: "http://localhost:3001",
+  credentials: true, 
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
+}));
 
 app.use("/auth", authRoutes);
 app.use("/account", accountRoutes);

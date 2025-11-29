@@ -14,6 +14,8 @@ import LoginForm from './components/LoginForm';
 import Calculadora from './components/Calculadora';
 import './App.css'
 import { Bot, X } from 'lucide-react';
+import NewPasswordForm from './components/NewPasswordForm';
+
 
 const AppContent: React.FC = () => {
   const { state, dispatch, showChat, setShowChat } = useApp();
@@ -25,6 +27,9 @@ const AppContent: React.FC = () => {
     }
     if (state.currentAuthView === 'login') {
       return <LoginForm />;
+    }
+    if (state.currentAuthView === 'forgot-password') {
+      return <NewPasswordForm />;
     }
     // Por defecto retorna la página de inicio
     return <HomePage />;

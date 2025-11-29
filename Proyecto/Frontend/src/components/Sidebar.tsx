@@ -7,11 +7,13 @@ import {
   Newspaper,
   HelpCircle,
   Settings,
-  PiggyBank
+  PiggyBank,
+  LogOut
 } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { Button } from './ui/button';
 import { cn } from '../lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 
 interface MenuItem {
   id: string;
@@ -139,6 +141,19 @@ const Sidebar: React.FC = () => {
               >
                 <Settings className="w-4 h-4 mr-2" />
                 Configuración
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start text-gray-600 hover:text-gray-900"
+                onClick={async () => {
+                  dispatch({ type: 'SET_AUTHENTICATED', payload: false });
+                  dispatch({ type: 'SET_AUTH_VIEW', payload: 'home' });
+                  alert('Sesión finalizada, gracias por utilizar Ubudget.');
+                }}
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Cerrar Sesión
               </Button>
             </div>
           </div>

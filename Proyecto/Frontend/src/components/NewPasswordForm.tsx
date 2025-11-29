@@ -1,37 +1,17 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, User, Mail, Lock, Check } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, UserPlus, Key } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { useApp } from '../contexts/AppContext';
-import { api } from '@/lib/api';
+import { api } from '../lib/api';
 import { useAuth } from '@/hooks/useAuth';
-import PopUp from './PopUp';
 
-// contenido simple para los popups (puedes moverlo a su propio archivo)
-const TermsContent: React.FC = () => (
-  <div className="prose max-w-none">
-    <p>Uso público.</p>
-  </div>
-);
-
-const PrivacyContent: React.FC = () => (
-  <div className="prose max-w-none">    
-    <p>
-      En desarrollo.
-    </p>
-  </div>
-);
-
-const RegistrationForm: React.FC = () => {
+const NewPasswordForm: React.FC = () => {
   const { dispatch } = useApp();
-  const [openTerms, setOpenTerms] = useState(false);
-  const [openPrivacy, setOpenPrivacy] = useState(false);
   const [formData, setFormData] = useState({
-    nombre: '',
     email: '',
-    password: '',
-    confirmPassword: '',
-    aceptaTerminos: false
+    password: '', 
+    confirmPassword: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -43,35 +23,8 @@ const RegistrationForm: React.FC = () => {
     return emailRegex.test(email);
   };
 
-  const validatePassword = (password: string): { isValid: boolean; errors: string[] } => {
-    const errors: string[] = [];
-
-    if (password.length < 8) {
-      errors.push('Al menos 8 caracteres');
-    }
-    if (!/[A-Z]/.test(password)) {
-      errors.push('Una mayúscula');
-    }
-    if (!/[a-z]/.test(password)) {
-      errors.push('Una minúscula');
-    }
-    if (!/\d/.test(password)) {
-      errors.push('Un número');
-    }
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      errors.push('Un carácter especial');
-    }
-
-    return { isValid: errors.length === 0, errors };
-  };
-
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
-
-    // Validar nombre
-    if (!formData.nombre.trim()) {
-      newErrors.nombre = 'El nombre es requerido';
-    }
 
     // Validar email
     if (!formData.email.trim()) {
@@ -79,34 +32,21 @@ const RegistrationForm: React.FC = () => {
     } else if (!validateEmail(formData.email)) {
       newErrors.email = 'El formato del email no es válido';
     }
-
     // Validar contraseña
     if (!formData.password) {
       newErrors.password = 'La contraseña es requerida';
-    } else {
-      const passwordValidation = validatePassword(formData.password);
-      if (!passwordValidation.isValid) {
-        newErrors.password = passwordValidation.errors.join(', ');
-      }
     }
-
     // Validar confirmación de contraseña
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = 'Confirma tu contraseña';
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Las contraseñas no coinciden';
     }
-
-    // Validar términos
-    if (!formData.aceptaTerminos) {
-      newErrors.aceptaTerminos = 'Debes aceptar los términos y condiciones';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (field: string, value: string | boolean) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Limpiar error del campo cuando el usuario empieza a escribir
     if (errors[field]) {
@@ -116,31 +56,28 @@ const RegistrationForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
+    if (!validateForm()) return;
     setIsSubmitting(true);
 
     try {
-      const {register} = useAuth();
-        await register(formData.email, formData.password, formData.nombre);
-        alert('Registro exitoso. Ahora puedes iniciar sesión.');
-        dispatch({ type: 'SET_AUTH_VIEW', payload: 'login' });
-    } catch (error) {
-      alert('Error al registrar. Por favor intenta nuevamente.');
+      const { forgotPassword } = useAuth();
+      await forgotPassword(formData.email, formData.password);
+      alert('Contraseña modificada.');
+      dispatch({ type: 'SET_AUTH_VIEW', payload: 'login' });
+
+    } catch (err: any) {
+      setErrors(prev => ({ ...prev, form: err.body?.message || err.message || 'Error de autenticación' }));
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const goToLogin = () => {
-    dispatch({ type: 'SET_AUTH_VIEW', payload: 'login' });
+  const goToRegister = () => {
+    dispatch({ type: 'SET_AUTH_VIEW', payload: 'register' });
   };
 
   const goToHome = () => {
-    dispatch({ type: 'SET_AUTH_VIEW', payload: 'home' }); 
+    dispatch({ type: 'SET_AUTH_VIEW', payload: 'home' });
   };
 
   return (
@@ -150,36 +87,14 @@ const RegistrationForm: React.FC = () => {
           <div className="flex items-center justify-center mb-4">
             <div className="w-12 h-12 bg-green-700 rounded-lg flex items-center justify-center">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Crear Cuenta</h2>
-          <p className="text-gray-600">Únete a UBudget y toma control de tus finanzas</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Cambiar contraseña</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Nombre */}
-          <div>
-            <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-2">
-              Nombre completo
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-5 w-5 text-gray-400" />
-              </div>
-              <Input
-                id="nombre"
-                type="text"
-                placeholder="Ingresa tu nombre completo"
-                value={formData.nombre}
-                onChange={(e) => handleInputChange('nombre', e.target.value)}
-                className={`pl-10 ${errors.nombre ? 'border-red-500' : 'border-gray-300'}`}
-              />
-            </div>
-            {errors.nombre && <p className="mt-1 text-sm text-red-600">{errors.nombre}</p>}
-          </div>
-
           {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -213,7 +128,7 @@ const RegistrationForm: React.FC = () => {
               <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Crea una contraseña segura"
+                placeholder="Ingresa tu contraseña"
                 value={formData.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
                 className={`pl-10 pr-10 ${errors.password ? 'border-red-500' : 'border-gray-300'}`}
@@ -230,19 +145,8 @@ const RegistrationForm: React.FC = () => {
                 )}
               </button>
             </div>
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-600">La contraseña debe tener: {errors.password}</p>
-            )}
-            {formData.password && !errors.password && (
-              <div className="mt-2 text-xs text-green-600">
-                <div className="flex items-center space-x-1">
-                  <Check className="h-3 w-3" />
-                  <span>Contraseña segura</span>
-                </div>
-              </div>
-            )}
+            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
           </div>
-
           {/* Confirmar Contraseña */}
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
@@ -275,44 +179,7 @@ const RegistrationForm: React.FC = () => {
             {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
           </div>
 
-          {/* Términos y condiciones */}
-          <div className="flex items-start">
-            <div className="flex items-center h-5">
-              <input
-                id="aceptaTerminos"
-                type="checkbox"
-                checked={formData.aceptaTerminos}
-                onChange={(e) => handleInputChange('aceptaTerminos', e.target.checked)}
-                className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
-              />
-            </div>
-            <div className="ml-3 text-sm">
-              <label htmlFor="aceptaTerminos" className="font-medium text-gray-700">
-                Acepto los términos y condiciones
-              </label>
-              <p className="text-gray-500">
-                Al registrarte, aceptas nuestros{' '}
-                <button
-                  type="button"
-                  onClick={() => setOpenTerms(true)}
-                  className="text-blue-600 hover:text-blue-500 underline"
-                >
-                  términos de servicio
-                </button>{' '}
-                y{' '}
-                <button
-                  type="button"
-                  onClick={() => setOpenPrivacy(true)}
-                  className="text-blue-600 hover:text-blue-500 underline"
-                >
-                  política de privacidad
-                </button>
-              </p>
-            </div>
-          </div>
-          {errors.aceptaTerminos && <p className="mt-1 text-sm text-red-600">{errors.aceptaTerminos}</p>}
-
-          {/* Botón de registro */}
+          {/* Botón de login */}
           <Button
             type="submit"
             disabled={isSubmitting}
@@ -321,23 +188,24 @@ const RegistrationForm: React.FC = () => {
             {isSubmitting ? (
               <div className="flex items-center justify-center">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Registrando...
+                Cambiando la contraseña...
               </div>
             ) : (
-              'Crear cuenta'
+              'Cambiar la contraseña'
             )}
           </Button>
         </form>
 
-        {/* Enlace a login */}
+        {/* Enlace a registro */}
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            ¿Ya tienes una cuenta?{' '}
+            ¿No tienes una cuenta?{' '}
             <button
-              onClick={goToLogin}
-              className="font-medium text-blue-600 hover:text-blue-500"
+              onClick={goToRegister}
+              className="font-medium text-blue-600 hover:text-blue-500 flex items-center justify-center"
             >
-              Inicia sesión aquí
+              <UserPlus className="h-4 w-4 mr-1" />
+              Regístrate aquí
             </button>
           </p>
         </div>
@@ -346,23 +214,15 @@ const RegistrationForm: React.FC = () => {
         <div className="mt-4 text-center">
           <button
             onClick={goToHome}
-            className="text-sm text-gray-500 hover:text-gray-700"
+            className="text-sm text-gray-500 hover:text-gray-700 flex items-center justify-center"
           >
+            <Key className="h-4 w-4 mr-1" />
             Volver al inicio
           </button>
         </div>
       </div>
-
-      {/* Popups */}
-      <PopUp isOpen={openTerms} onClose={() => setOpenTerms(false)} title="Términos de servicio" showConfirm={false}>
-        <TermsContent />
-      </PopUp>
-
-      <PopUp isOpen={openPrivacy} onClose={() => setOpenPrivacy(false)} title="Política de privacidad" showConfirm={false}>
-        <PrivacyContent />
-      </PopUp>
     </div>
   );
 };
 
-export default RegistrationForm;
+export default NewPasswordForm;

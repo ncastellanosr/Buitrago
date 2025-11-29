@@ -26,8 +26,8 @@ const Header: React.FC = () => {
           </Button>
 
           <div className="hidden md:block text-right">
-            <p className="text-sm font-medium text-gray-900">Usuario Demo</p>
-            <p className="text-xs text-gray-500">Inversionista</p>
+            <p className="text-sm font-medium text-gray-900">Pelmazote</p>
+            <p className="text-xs text-gray-500">Bienvenid@</p>
           </div>
         </div>
       </div>

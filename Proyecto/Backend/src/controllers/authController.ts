@@ -90,14 +90,15 @@ export async function login(req: Request, res: Response) {
     user.lastLogin = new Date();
     await userRepo.save(user);
     // Respond
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 1000, 
+    });
     return res.json({
       message: "Login successful.",
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-      },
+      user: { id: user.id, email: user.email, name: user.name },
     });
   } catch (err) {
     console.error("Login error:", err);
@@ -131,4 +132,23 @@ export async function changePassword(req: Request, res: Response) {
         return res.status(500).json({ message: "Internal server error." });
     }
 
+}
+export async function logout(req: Request, res: Response) {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  });
+  return res.json({ message: 'Logged out' });
+}
+export async function me(req: Request, res: Response) {
+  try {
+    const token = req.cookies?.token;
+    if (!token) return res.status(401).json({ message: 'No session' });
+    const payload = jwt.verify(token, process.env.JWT_SECRET as string) as any;
+    // buscar usuario por payload.userId si quieres datos actualizados
+    return res.json({ user: { id: payload.userId, email: payload.email } });
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid session' });
+  }
 }

@@ -3,6 +3,6 @@ import { doTransaction } from "../controllers/transactionController";
 
 const router = Router();
 
-router.post("/make_transaction", doTransaction);
+router.post("/new", doTransaction);
 
 export default router;

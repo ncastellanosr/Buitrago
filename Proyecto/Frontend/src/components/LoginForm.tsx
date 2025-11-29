@@ -3,6 +3,7 @@ import { Eye, EyeOff, Mail, Lock, UserPlus, Key } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { useApp } from '../contexts/AppContext';
+import { useAuth } from '@/hooks/useAuth';
 
 const LoginForm: React.FC = () => {
   const { dispatch } = useApp();
@@ -56,16 +57,9 @@ const LoginForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Simular llamada a API
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // En una aplicación real, aquí se enviarían las credenciales al servidor
-      console.log('Credenciales de login:', {
-        email: formData.email,
-        password: formData.password
-      });
-
-      // Simular login exitoso
+      const { login } = useAuth();
+      await login(formData.email, formData.password);
+      alert('Sesión iniciada correctamente.');
       dispatch({ type: 'SET_AUTHENTICATED', payload: true });
       dispatch({ type: 'SET_SHOW_HOME_PAGE', payload: false });
 

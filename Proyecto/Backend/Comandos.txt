@@ -24,7 +24,7 @@ Para verificar un token (obligatorio antes de cada operacion o respuesta del ser
 MAC/LINUX STYLE: (no respondo por windows :v)
 
 REGISTRO:
-curl -X POST http://localhost:3000/auth/register -H "Content-Type: application/json" -d '{"email":"test@example.com","password":"Mano12345","name":"Testérñ"}'
+curl -X POST http://localhost:3000/auth/register -H "Content-Type: application/json" -d '{"email":"test@example.com","password":"Mano12345","name":"Tester"}'
 
 LOGIN:
 Instala jq si hace falta y ejecuta:
@@ -52,17 +52,17 @@ curl -X POST http://localhost:3000/account/deactivate -H "Content-Type: applicat
 MAKE TRANSACTION. IMPORTANTE CADA VEZ QUE SE HACE UNACUENTA SE CREA UN NUMERO RANDOM POR LO QUE HAY QUE ACTUALIZAR ESTE COMANDO CON LOS QUE LE BOTE LA TERMINAL
         	user: string, accountOne:string, accountTwo:string, category:string, action:string, amountOne:string, 
             amountTwo:string, currency:string, description:string
-curl -X POST http://localhost:3000/transaction/make_transaction \
+curl -X POST http://localhost:3000/transaction/new \
 -H "Content-Type: application/json" \
 -d '{"user":"1","accountOne":"5502-2b0c743c-7e1c-4e88-a6d4-f37adf5579b9","accountTwo":"","category":"EXPENSE","amountOne":"50","amountTwo":"","currency":"USD","description":"testing"}'
 
 MAKE OBLIGATION / REMINDER
 user, title, amountTotal, amountRemaining, currency, dueDate, frequency, state
-curl -X POST http://localhost:3000/obligation/make_obligation \
+curl -X POST http://localhost:3000/obligation/new \
 -H "Content-Type: application/json" \
 -d '{"user":"1", "title":"Probando titulo", "amountTotal":"5000", "amountRemaining":"5000", "currency":"USD", "dueDate":"2025-12-28", "frequency":"ONE_TIME", "state":"OPEN"}'
 
 
-curl -X POST http://localhost:3000/obligation/make_reminder \
+curl -X POST http://localhost:3000/obligation/reminder \
 -H "Content-Type: application/json" \
 -d '{"user":"1", "title":"Probando titulo", "dueDate":"2025-12-28"}'

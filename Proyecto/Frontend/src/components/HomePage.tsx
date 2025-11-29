@@ -24,7 +24,7 @@ const HomePage: React.FC = () => {
               <img src="../../public/images/logo_UBudget2.png" className="h-10 w-auto" alt="Logo" />
             </div>
             <div className="flex space-x-4">
-              <Button
+              {/* <Button
                 variant="outline"
                 onClick={handleLogin}
                 className="border-green-700 text-green-700 hover:bg-green-50"
@@ -36,7 +36,7 @@ const HomePage: React.FC = () => {
                 className="bg-green-700 hover:bg-green-800 text-white"
               >
                 Registrarse
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
@@ -60,7 +60,7 @@ const HomePage: React.FC = () => {
                 onClick={handleRegister}
                 className="bg-green-700 hover:bg-green-800 text-white px-8 py-3 text-lg"
               >
-                Comenzar Gratis
+                Registrate
               </Button>
               <Button
                 size="lg"
