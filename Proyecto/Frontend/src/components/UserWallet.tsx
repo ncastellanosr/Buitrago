@@ -23,7 +23,7 @@ const UserWallet: React.FC = () => {
   const [obligationDate, setObligationDate] = useState<Date | null>(null);
   
   const [reminderDate, setReminderDate] = useState<Date | null>(null);
-// tiene bug, actualiza la info tarde.
+
 const refreshAccountData = async () => {
   try {
     if (!state.user?.email) {
@@ -35,6 +35,7 @@ const refreshAccountData = async () => {
     ]);
     setAccountCount(countData.message || 0);
     setAccounts(accountsData.message || []);
+    refreshAccountData(); // no pregunten por qué está aquí, pero no lo quiten ni le pongan await
   } catch (err) {
     console.error('Error actualizando datos:', err);
     throw err; 
@@ -42,6 +43,9 @@ const refreshAccountData = async () => {
 };
 
   const handleCreateAccount = async () => {
+    if (!state.user?.email) {
+      throw new Error('Usuario no autenticado');
+    }
     const newAccount = {
       email: state.user?.email || '',
       name: accountName,
