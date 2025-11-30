@@ -8,7 +8,8 @@ import accountRoutes from "./routes/accountRoutes"
 import transactionRoutes from "./routes/transactionRoutes"
 import obligationRoutes from "./routes/obligationRoutes";
 import { authenticateToken, AuthRequest } from "./authMiddleware";
-
+import preferenciaNoticiaRoutes from "./newsFeed/PreferenciaNoticiaRoutes";
+import financialNewsRouter from './newsFeed/FinancialNews';
 const app = express();
 app.use(bodyParser.json());
 app.use(cors({
@@ -22,6 +23,8 @@ app.use("/auth", authRoutes);
 app.use("/account", accountRoutes);
 app.use("/transaction", transactionRoutes);
 app.use("/obligation", obligationRoutes);
+app.use('/api/financial-news', financialNewsRouter);
+app.use("/api/news-preferences", preferenciaNoticiaRoutes);
 
 const PORT = 3000;
 
