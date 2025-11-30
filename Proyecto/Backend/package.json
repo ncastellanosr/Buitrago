@@ -17,10 +17,7 @@
     "@types/cors": "^2.8.19",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
-<<<<<<< HEAD
     "cookie-parser": "^1.4.7",
-=======
->>>>>>> d33b8c9 (guardando cambios locales antes del pull)
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",

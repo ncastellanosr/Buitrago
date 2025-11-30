@@ -12,38 +12,15 @@ import HomePage from './components/HomePage';
 import RegistrationForm from './components/RegistrationForm';
 import LoginForm from './components/LoginForm';
 import Calculadora from './components/Calculadora';
-<<<<<<< HEAD
 import UserWallet from './components/UserWallet';
-import './App.css'
-=======
 import './App.css';
->>>>>>> d33b8c9 (guardando cambios locales antes del pull)
 import { Bot, X } from 'lucide-react';
 import NewPasswordForm from './components/NewPasswordForm';
 
 
 const AppContent: React.FC = () => {
   const { state, dispatch, showChat, setShowChat } = useApp();
-<<<<<<< HEAD
-
-  // Flow de autenticación
-  if (!state.isAuthenticated) {
-    if (state.currentAuthView === 'register') {
-      return <RegistrationForm />;
-    }
-    if (state.currentAuthView === 'login') {
-      return <LoginForm />;
-    }
-    if (state.currentAuthView === 'forgot-password') {
-      return <NewPasswordForm />;
-    }
-    // Por defecto retorna la página de inicio
-    return <HomePage />;
-  }
-
   // Detectar selección de texto para el asistente educativo
-=======
->>>>>>> d33b8c9 (guardando cambios locales antes del pull)
   useEffect(() => {
     if (!state.isAuthenticated) return;
 
@@ -63,6 +40,7 @@ const AppContent: React.FC = () => {
     return () => document.removeEventListener('mouseup', handleTextSelection);
   }, [state.isAuthenticated, state.educationalContent, dispatch]);
 
+    // Flow de autenticación
   if (!state.isAuthenticated) {
     if (state.currentAuthView === 'register') {
       return <RegistrationForm />;
@@ -70,8 +48,13 @@ const AppContent: React.FC = () => {
     if (state.currentAuthView === 'login') {
       return <LoginForm />;
     }
+    if (state.currentAuthView === 'forgot-password') {
+      return <NewPasswordForm />;
+    }
+    // Por defecto retorna la página de inicio
     return <HomePage />;
   }
+
 
   const renderCurrentView = () => {
     switch (state.currentView) {

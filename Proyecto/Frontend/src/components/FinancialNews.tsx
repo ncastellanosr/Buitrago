@@ -206,7 +206,7 @@ const FinancialNews: React.FC = () => {
     setEffectModalOpen(true);
     effectNewsIdRef.current = newsItem.id;
 
-    // Guardar noticia en la BD
+    // Guardar noticia en la BD:v
     saveNewsToBackend(newsItem).catch(() => {});
 
     try {

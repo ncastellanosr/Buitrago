@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import "reflect-metadata";
 import bodyParser from "body-parser";
-import cors from "cors";
 import { AppDataSource } from "./database";
 import authRoutes from "./routes/authRoutes";
 import accountRoutes from "./routes/accountRoutes"
@@ -12,12 +11,7 @@ import { authenticateToken, AuthRequest } from "./authMiddleware";
 import preferenciaNoticiaRoutes from "./newsFeed/PreferenciaNoticiaRoutes";
 import financialNewsRouter from './newsFeed/FinancialNews';
 const app = express();
-app.use(cors({
-  origin: "http://localhost:3307",          // origen del frontend
-  credentials: false,
-}));
 app.use(bodyParser.json());
-<<<<<<< HEAD
 app.use(cors({
   origin: "http://localhost:3001",
   credentials: true, 
@@ -25,8 +19,6 @@ app.use(cors({
   allowedHeaders: ['Content-Type','Authorization']
 }));
 
-=======
->>>>>>> d33b8c9 (guardando cambios locales antes del pull)
 app.use("/auth", authRoutes);
 app.use("/account", accountRoutes);
 app.use("/transaction", transactionRoutes);
