@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Trash2, PieChart, Wallet, PersonStanding, WalletCardsIcon, DollarSign, CreditCard, Calendar, Receipt } from 'lucide-react';
+import { Plus, Trash2, PieChart, Wallet, PersonStanding, WalletCardsIcon, DollarSign, CreditCard, Calendar, Receipt, Maximize2, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -10,6 +10,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useAccount } from '@/hooks/useAccount';
 import { useApp } from '@/contexts/AppContext';
+import * as Dialog from '@radix-ui/react-dialog';
 
 const UserWallet: React.FC = () => {
   const { state, setAccountCount, setAccounts } = useApp();
@@ -19,7 +20,8 @@ const UserWallet: React.FC = () => {
   const [accountCurrency, setAccountCurrency] = useState<string>('');
   const [accountBalance, setAccountBalance] = useState<string>('');
   const [accountName, setAccountName] = useState<string>('');
-
+  const [accountModalOpen, setAccountModalOpen] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState<any>(null);  
   const [obligationDate, setObligationDate] = useState<Date | null>(null);
   
   const [reminderDate, setReminderDate] = useState<Date | null>(null);
@@ -210,22 +212,35 @@ const refreshAccountData = async () => {
             <div className="space-y-2">
               {state.accounts && state.accounts.length > 0 ? (
                 state.accounts.map((account) => (
-                  <div key={account.accountNumber} className="flex items-center justify-between p-3 bg-white border rounded-lg">
-                    <div>
-                      <p className="font-medium">{account.accountName || 'Cuenta sin nombre'} </p>
-                      <p className="text-sm text-gray-500">{account.accountNumber}</p>
-                      <p className="text-sm text-gray-500">Tipo: {account.accountType}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="text-green-700">{account.cachedBalance ? `$${account.cachedBalance}` : '$0.00'}</Badge>
-                      <Button size="sm" 
+                  <div key={account.accountNumber} className="relative flex items-center justify-between p-3 bg-white border rounded-lg">
+                    {/* Botón en esquina superior derecha */}
+                    <Button 
+                      size="sm"
                       variant="ghost"
-                      onClick={async () => {
-                        if (window.confirm(`¿Eliminar la cuenta "${account.accountName}"?`)) {
-                          await handleDeactivateAccount(account.accountNumber);
-                        }
+                      className="absolute top-2 right-2"
+                      onClick={() => {
+                        setSelectedAccount(account);
+                        setAccountModalOpen(true);
                       }}
-                      // onClick={() => handleDeactivateAccount(account.accountNumber)}
+                    > 
+                      <Maximize2 className="w-4 h-4 text-blue-500" />
+                    </Button>
+                    <div className="space-y-4">
+                      <p className="font-medium">{account.accountName || 'Cuenta sin nombre'}</p>
+                      <p className="text-sm text-gray-500">{account.accountNumber}</p>
+                    </div>
+                    <div className="absolute bottom-2 right-2 flex items-center gap-2">
+                      <Badge variant="secondary" className="text-green-700">
+                        {account.cachedBalance ? `$${account.cachedBalance}` : '$0.00'}
+                      </Badge>
+                      <Button 
+                        size="sm" 
+                        variant="ghost"
+                        onClick={async () => {
+                          if (window.confirm(`¿Eliminar la cuenta "${account.accountName}"?`)) {
+                            await handleDeactivateAccount(account.accountNumber);
+                          }
+                        }}
                       >
                         <Trash2 className="w-4 h-4 text-red-500" />
                       </Button>
@@ -485,6 +500,82 @@ const refreshAccountData = async () => {
           </CardContent>
         </Card>
       </div>
+      <Dialog.Root open={accountModalOpen} onOpenChange={setAccountModalOpen}>
+  <Dialog.Portal>
+    <Dialog.Overlay className="fixed inset-0 bg-black/50 z-40" />
+    
+    <Dialog.Content className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl p-6 w-full max-w-lg">
+      <div className="flex items-center justify-between mb-4">
+        <Dialog.Title className="text-xl font-bold">
+          Detalles de la Cuenta
+        </Dialog.Title>
+        <Dialog.Close asChild>
+          <button className="rounded-sm opacity-70 hover:opacity-100">
+            <X className="h-4 w-4" />
+          </button>
+        </Dialog.Close>
+      </div>
+      <div>
+        <Label className="text-sm font-medium text-gray-700">Nombre</Label>
+        <p className="text-base text-gray-900 mt-1">
+        <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+          {selectedAccount?.accountName ?? 'No disponible'}
+        </Badge>
+        </p>
+      </div>
+      <div>
+        <Label className="text-sm font-medium text-gray-700">Número</Label>
+        <p className="text-base text-gray-900 mt-1">
+        <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+          {selectedAccount?.accountNumber ?? 'No disponible'}
+        </Badge> 
+        </p>
+      </div>
+      <div>
+        <Label className="text-sm font-medium text-gray-700">Balance</Label>
+        <p className="text-base text-gray-900 mt-1">
+        <Badge variant="secondary" className="text-green-700 text-sm px-2.5 py-1">
+          {selectedAccount?.cachedBalance ? `$${selectedAccount.cachedBalance}` : '$0.00'}
+        </Badge>
+        </p>
+      </div>
+      <div>
+        <Label className="text-sm font-medium text-gray-700">Tipo</Label>
+        <p className="text-base text-gray-900 mt-1">
+        <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+          {selectedAccount?.accountType ?? 'No disponible'}
+        </Badge>  
+        </p>
+      </div>
+      <div>
+        <Label className="text-sm font-medium text-gray-700">Moneda</Label>
+        <p className="text-base text-gray-900 mt-1">
+        <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+          {selectedAccount?.accountCurrency ?? 'No disponible'}
+        </Badge>
+        </p>
+      </div>
+      <div>
+        <Label className="text-sm font-medium text-gray-700">Fecha de creación</Label>
+        <p className="text-base text-gray-900 mt-1"> 
+        <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+          {
+          selectedAccount?.createdAt 
+            ? new Date(selectedAccount.createdAt).toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })
+            : 'No disponible'
+          }
+        </Badge>
+        </p>
+      </div>
+    </Dialog.Content>
+  </Dialog.Portal>
+</Dialog.Root>
     </div>
   );
 };
