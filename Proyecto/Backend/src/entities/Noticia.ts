@@ -8,7 +8,7 @@ import {
 @Entity('noticia')
 export class Noticia{
 
-    @PrimaryGeneratedColumn('increment', {type: 'bigint'})
+    @PrimaryGeneratedColumn( { name: 'noticia_id',type: 'bigint'})
     id: number;
 
     @Column({type: 'varchar', length: 200})
@@ -30,7 +30,8 @@ export class Noticia{
     @Index()
     @Column({ name: 'published_at',type: 'datetime'})
     publishedAt: Date;
-
-    @Column({ name: 'raw_playload', type: 'json', nullable: true})
+    @Column({ name: 'fetched_at', type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+    fetchedAt: Date;
+    @Column({ name: 'raw_payload', type: 'json', nullable: true})
     rawPayload: JSON;
 }

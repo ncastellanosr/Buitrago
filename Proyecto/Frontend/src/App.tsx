@@ -12,14 +12,19 @@ import HomePage from './components/HomePage';
 import RegistrationForm from './components/RegistrationForm';
 import LoginForm from './components/LoginForm';
 import Calculadora from './components/Calculadora';
+<<<<<<< HEAD
 import UserWallet from './components/UserWallet';
 import './App.css'
+=======
+import './App.css';
+>>>>>>> d33b8c9 (guardando cambios locales antes del pull)
 import { Bot, X } from 'lucide-react';
 import NewPasswordForm from './components/NewPasswordForm';
 
 
 const AppContent: React.FC = () => {
   const { state, dispatch, showChat, setShowChat } = useApp();
+<<<<<<< HEAD
 
   // Flow de autenticación
   if (!state.isAuthenticated) {
@@ -37,14 +42,17 @@ const AppContent: React.FC = () => {
   }
 
   // Detectar selección de texto para el asistente educativo
+=======
+>>>>>>> d33b8c9 (guardando cambios locales antes del pull)
   useEffect(() => {
+    if (!state.isAuthenticated) return;
+
     const handleTextSelection = () => {
       const selection = window.getSelection();
       if (selection && selection.toString().trim().length > 0) {
         const selectedText = selection.toString().trim().toLowerCase();
         dispatch({ type: 'SET_SELECTED_TEXT', payload: selectedText });
 
-        // Verificar si el texto seleccionado es un término financiero
         if (state.educationalContent?.terms[selectedText]) {
           dispatch({ type: 'TOGGLE_ASSISTANT' });
         }
@@ -53,7 +61,17 @@ const AppContent: React.FC = () => {
 
     document.addEventListener('mouseup', handleTextSelection);
     return () => document.removeEventListener('mouseup', handleTextSelection);
-  }, [state.educationalContent, dispatch]);
+  }, [state.isAuthenticated, state.educationalContent, dispatch]);
+
+  if (!state.isAuthenticated) {
+    if (state.currentAuthView === 'register') {
+      return <RegistrationForm />;
+    }
+    if (state.currentAuthView === 'login') {
+      return <LoginForm />;
+    }
+    return <HomePage />;
+  }
 
   const renderCurrentView = () => {
     switch (state.currentView) {
@@ -83,25 +101,27 @@ const AppContent: React.FC = () => {
           {renderCurrentView()}
         </main>
       </div>
+
       {state.showAssistant && (
         <EducationalAssistant
           selectedText={state.selectedText}
           onClose={() => dispatch({ type: 'TOGGLE_ASSISTANT' })}
         />
       )}
+
       <button
         className="fixed bottom-4 right-4 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition z-40"
         onClick={() => setShowChat(!showChat)}
       >
-        {showChat ? (<X />) : (<Bot />)}
+        {showChat ? <X /> : <Bot />}
       </button>
+
       <div className={`fixed bottom-20 right-4 z-50${showChat ? '' : ' hidden'}`}>
         <iframe
           src="https://udify.app/chatbot/qiv19sTK9weNweoy"
           className="w-[400px] md:w-[500px] h-[500px] border-none rounded-2xl shadow-lg bg-gradient-to-br from-blue-700 to-cyan-600"
           allow="microphone"
-        >
-        </iframe>
+        />
       </div>
     </div>
   );

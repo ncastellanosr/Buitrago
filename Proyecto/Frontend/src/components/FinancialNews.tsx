@@ -4,16 +4,16 @@ import {
   Clock,
   ExternalLink,
   RefreshCw,
-  LineChart // <-- Agrega este icono para el botón de efectos
+  LineChart
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { analyzeNewsEffect } from '../../geminiApi'; // Asegúrate de que la ruta sea correcta
-import { analyzeMarketNewsEffect } from '../../geminiApi'; // Nueva función para efecto de noticias generales
 import * as Dialog from '@radix-ui/react-dialog';
 import { parseBold } from '../utils/parseBold';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Finnhub API categories: general, forex, crypto, merger
 const CATEGORIES = [
@@ -48,14 +48,26 @@ const FinancialNews: React.FC = () => {
     crypto: 1,
     merger: 1,
   });
+
+  // Preferencias del usuario
+  const [preferences, setPreferences] = useState<string[]>([]);
+
   const [effectModalOpen, setEffectModalOpen] = useState(false);
   const [effectNews, setEffectNews] = useState<FinnhubNews | null>(null);
   const [effectLoading, setEffectLoading] = useState(false);
   const [effectError, setEffectError] = useState<string | null>(null);
   const [effectResult, setEffectResult] = useState<string | null>(null);
 
-  // Para evitar race conditions si abres/cambias rápido
   const effectNewsIdRef = useRef<number | null>(null);
+
+  const sortedCategories = React.useMemo(() => {
+    return [...CATEGORIES].sort((a, b) => {
+      const aPref = preferences.includes(a.value);
+      const bPref = preferences.includes(b.value);
+      if (aPref === bPref) return 0;
+      return aPref ? -1 : 1;
+    });
+  }, [preferences]);
 
   const fetchNews = async (category: string) => {
     setIsLoading(true);
@@ -68,16 +80,52 @@ const FinancialNews: React.FC = () => {
       setNews(prev => ({ ...prev, [category]: data }));
       setLastUpdate(new Date());
     } catch (e) {
+      console.error('Error cargando noticias:', e);
       setNews(prev => ({ ...prev, [category]: [] }));
     }
     setIsLoading(false);
   };
 
-  // Reset page to 1 when category changes
+  useEffect(() => {
+    const loadPreferences = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const res = await fetch(`${API_BASE_URL}/api/news-preferences`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const prefCategories = data
+          .filter((p: any) => p.priority)
+          .map((p: any) => p.category);
+
+        setPreferences(prefCategories);
+
+        if (prefCategories.length > 0) {
+          const first = prefCategories.find(c =>
+            CATEGORIES.some(cat => cat.value === c)
+          );
+          if (first) {
+            setActiveCategory(first);
+          }
+        }
+      } catch (err) {
+        console.error('Error cargando preferencias de noticias:', err);
+      }
+    };
+
+    loadPreferences();
+  }, []);
+
   useEffect(() => {
     setPage(prev => ({ ...prev, [activeCategory]: 1 }));
     fetchNews(activeCategory);
-    // eslint-disable-next-line
   }, [activeCategory]);
 
   const getTimeAgo = (unix: number) => {
@@ -92,32 +140,111 @@ const FinancialNews: React.FC = () => {
     }
   };
 
-  const handleOpenEffectModal = async (news: FinnhubNews) => {
-    setEffectNews(news);
+  // Guardar noticia en backend cuando abrimos "Efectos"
+  const saveNewsToBackend = async (newsItem: FinnhubNews) => {
+    try {
+      await fetch(`${API_BASE_URL}/api/financial-news/news-save`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          headline: newsItem.headline,
+          summary: newsItem.summary,
+          source: newsItem.source,
+          category: newsItem.category,
+          url: newsItem.url,
+          datetime: newsItem.datetime,
+        }),
+      });
+    } catch (err) {
+      console.error('Error al guardar noticia en backend:', err);
+    }
+  };
+  const togglePreference = async (category: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.warn('No hay token, no se pueden guardar preferencias');
+        return;
+      }
+
+      const isPreferred = preferences.includes(category);
+
+      const res = await fetch(`${API_BASE_URL}/api/news-preferences`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          category,
+          priority: isPreferred ? 0 : 1,
+        }),
+      });
+
+      if (!res.ok) {
+        console.error('Error guardando preferencia en backend');
+        return;
+      }
+
+      if (isPreferred) {
+        setPreferences(prev => prev.filter(c => c !== category));
+      } else {
+        setPreferences(prev => [...prev, category]);
+      }
+    } catch (err) {
+      console.error('Error cambiando preferencia:', err);
+    }
+  };
+
+  const handleOpenEffectModal = async (newsItem: FinnhubNews) => {
+    setEffectNews(newsItem);
     setEffectResult(null);
     setEffectError(null);
     setEffectLoading(true);
     setEffectModalOpen(true);
-    effectNewsIdRef.current = news.id;
+    effectNewsIdRef.current = newsItem.id;
+
+    // Guardar noticia en la BD
+    saveNewsToBackend(newsItem).catch(() => {});
+
     try {
-      // Usar la función específica para noticias generales
-      const result = await analyzeMarketNewsEffect({
-        headline: news.headline,
-        summary: news.summary,
-        source: news.source,
-        datetime: news.datetime,
-        url: news.url,
-        related: news.related,
-        category: news.category,
+      const response = await fetch(`${API_BASE_URL}/api/financial-news/news-effect`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          category: newsItem.category,
+          datetime: newsItem.datetime,
+          headline: newsItem.headline,
+          id: newsItem.id,
+          image: newsItem.image,
+          related: newsItem.related,
+          source: newsItem.source,
+          summary: newsItem.summary,
+          url: newsItem.url,
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error(`Error del servidor: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const resultText = data.result as string;
+
       // Solo actualiza si sigue siendo la misma noticia
-      if (effectNewsIdRef.current === news.id) {
-        setEffectResult(result);
+      if (effectNewsIdRef.current === newsItem.id) {
+        setEffectResult(resultText);
       }
     } catch (e) {
+      console.error('Error al obtener efectos de noticia:', e);
       setEffectError('No se pudo obtener el análisis de efectos.');
+    } finally {
+      setEffectLoading(false);
     }
-    setEffectLoading(false);
   };
 
   return (
@@ -145,21 +272,37 @@ const FinancialNews: React.FC = () => {
             <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             {isLoading ? 'Actualizando...' : 'Actualizar'}
           </Button>
+          {/* Botón para marcar/desmarcar favorita la categoría activa */}
+          <Button
+            size="sm"
+            variant={preferences.includes(activeCategory) ? 'default' : 'outline'}
+            onClick={() => togglePreference(activeCategory)}
+          >
+            {preferences.includes(activeCategory) ? 'Quitar de favoritos' : 'Marcar como favorito'}
+          </Button>
         </div>
       </div>
 
       <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
-          {CATEGORIES.map(cat => (
-            <TabsTrigger key={cat.value} value={cat.value}>{cat.label}</TabsTrigger>
+          {sortedCategories.map(cat => (
+            <TabsTrigger key={cat.value} value={cat.value}>
+              {cat.label}
+              {preferences.includes(cat.value) && (
+                <span className="ml-1 text-xs text-amber-500">★</span>
+              )}
+            </TabsTrigger>
           ))}
         </TabsList>
 
-        {CATEGORIES.map(cat => {
+        {sortedCategories.map(cat => {
           const currentPage = page[cat.value] || 1;
           const allNews = news[cat.value] || [];
           const totalPages = Math.ceil(allNews.length / PAGE_SIZE);
-          const paginatedNews = allNews.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+          const paginatedNews = allNews.slice(
+            (currentPage - 1) * PAGE_SIZE,
+            currentPage * PAGE_SIZE
+          );
 
           return (
             <TabsContent key={cat.value} value={cat.value} className="space-y-4">
@@ -181,13 +324,17 @@ const FinancialNews: React.FC = () => {
                   ))
                 ) : paginatedNews.length > 0 ? (
                   paginatedNews.map(article => (
-                    <Card key={article.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+                    <Card
+                      key={article.id}
+                      className="hover:shadow-lg transition-shadow cursor-pointer"
+                    >
                       <CardHeader className="pb-3">
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                               <Badge>
-                                {article.category.charAt(0).toUpperCase() + article.category.slice(1)}
+                                {article.category.charAt(0).toUpperCase() +
+                                  article.category.slice(1)}
                               </Badge>
                             </div>
                             <CardTitle className="text-lg leading-tight">
@@ -217,7 +364,11 @@ const FinancialNews: React.FC = () => {
                           </div>
                           <div className="flex gap-2">
                             <Button size="sm" variant="outline" asChild>
-                              <a href={article.url} target="_blank" rel="noopener noreferrer">
+                              <a
+                                href={article.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
                                 <ExternalLink className="w-3 h-3 mr-1" />
                                 Leer más
                               </a>
@@ -274,7 +425,10 @@ const FinancialNews: React.FC = () => {
                     onClick={() =>
                       setPage(prev => ({
                         ...prev,
-                        [cat.value]: Math.min(totalPages, (prev[cat.value] || 1) + 1),
+                        [cat.value]: Math.min(
+                          totalPages,
+                          (prev[cat.value] || 1) + 1
+                        ),
                       }))
                     }
                     disabled={currentPage === totalPages}
@@ -304,8 +458,19 @@ const FinancialNews: React.FC = () => {
                   className="absolute right-6 top-6 z-50 text-gray-400 hover:text-gray-700 transition-colors"
                   aria-label="Cerrar"
                 >
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M18 6L6 18M6 6l12 12"/>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M18 6L6 18M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </Dialog.Close>
@@ -313,7 +478,11 @@ const FinancialNews: React.FC = () => {
                 {effectNews?.headline}
               </Dialog.Title>
               <Dialog.Description className="mb-0 text-gray-600">
-                {effectNews?.source} • {effectNews?.datetime && new Date(effectNews.datetime * 1000).toLocaleDateString('es-CO')}
+                {effectNews?.source} •{' '}
+                {effectNews?.datetime &&
+                  new Date(effectNews.datetime * 1000).toLocaleDateString(
+                    'es-CO'
+                  )}
               </Dialog.Description>
             </div>
             <div
@@ -326,16 +495,17 @@ const FinancialNews: React.FC = () => {
             >
               {effectNews && (
                 <>
-                  {/* Imagen eliminada */}
-                  <div className="text-gray-700 mb-4">{effectNews.summary}</div>
+                  <div className="text-gray-700 mb-4">
+                    {effectNews.summary}
+                  </div>
                   {effectNews.url && (
                     <div className="mb-4">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        asChild
-                      >
-                        <a href={effectNews.url} target="_blank" rel="noopener noreferrer">
+                      <Button size="sm" variant="outline" asChild>
+                        <a
+                          href={effectNews.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
                           <ExternalLink className="w-3 h-3 mr-1" />
                           Leer más
                         </a>
@@ -359,16 +529,34 @@ const FinancialNews: React.FC = () => {
                     {/* Badge generado con IA */}
                     <div className="flex items-center gap-2 mb-2">
                       <span className="inline-flex items-center px-2 py-0.5 rounded bg-purple-100 text-purple-700 text-xs font-medium">
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 20 20">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M10 2.5l1.09 3.36a1 1 0 00.95.69h3.54a.5.5 0 01.29.91l-2.87 2.09a1 1 0 00-.36 1.12l1.09 3.36a.5.5 0 01-.77.56L10 13.77l-2.87 2.09a.5.5 0 01-.77-.56l1.09-3.36a1 1 0 00-.36-1.12l-2.87-2.09a.5.5 0 01.29-.91h3.54a1 1 0 00.95-.69L10 2.5z"/>
+                        <svg
+                          className="w-4 h-4 mr-1"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M10 2.5l1.09 3.36a1 1 0 00.95.69h3.54a.5.5 0 01.29.91l-2.87 2.09a1 1 0 00-.36 1.12l1.09 3.36a.5.5 0 01-.77.56L10 13.77l-2.87 2.09a.5.5 0 01-.77-.56l1.09-3.36a1 1 0 00-.36-1.12l-2.87-2.09a.5.5 0 01.29-.91h3.54a1 1 0 00.95-.69L10 2.5z"
+                          />
                         </svg>
                         Generado con IA
                       </span>
                     </div>
-                    <div className="text-sm text-gray-800 whitespace-pre-line" dangerouslySetInnerHTML={{ __html: parseBold(effectResult) }} />
+                    <div
+                      className="text-sm text-gray-800 whitespace-pre-line"
+                      dangerouslySetInnerHTML={{
+                        __html: parseBold(effectResult),
+                      }}
+                    />
                   </div>
                 ) : (
-                  <div className="text-xs text-gray-400">Haz clic en "Efectos" en una noticia para analizar los efectos de la noticia en el mercado.</div>
+                  <div className="text-xs text-gray-400">
+                    Haz clic en "Efectos" en una noticia para analizar los
+                    efectos de la noticia en el mercado.
+                  </div>
                 )}
               </div>
             </div>
