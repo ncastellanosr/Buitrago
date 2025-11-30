@@ -35,7 +35,8 @@ const refreshAccountData = async () => {
     ]);
     setAccountCount(countData.message || 0);
     setAccounts(accountsData.message || []);
-    refreshAccountData(); // no pregunten por qué está aquí, pero no lo quiten ni le pongan await
+    console.log('Datos de cuenta actualizados:', { count: countData, accounts: accountsData });
+
   } catch (err) {
     console.error('Error actualizando datos:', err);
     throw err; 
@@ -81,8 +82,9 @@ const refreshAccountData = async () => {
     try {
       console.log('Eliminando cuenta con número:', accountNumber);
       await deactivateAccount(state.user.email, accountNumber);
-      await refreshAccountData();
+      // await refreshAccountData();
       alert('Cuenta eliminada exitosamente');
+      refreshAccountData();
       console.log('Cuentas activas después de eliminar una cuenta:', state.accounts);
     } catch (err) {
       console.error('Error al eliminar cuenta:', err);
