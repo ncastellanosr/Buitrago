@@ -46,8 +46,14 @@ curl -X POST http://localhost:3000/account/create -H "Content-Type: application/
 NEW ACCOUNT:
 curl -X POST http://localhost:3000/account/create -H "Content-Type: application/json" -d '{"email":"test@example.com","accName":"Ahorros2","type":"SAVINGS","currency":"COP","balance":"100"}'
 
-DEACTIVATE ACCOUNT:email, accName, isActive
-curl -X POST http://localhost:3000/account/deactivate -H "Content-Type: application/json" -d '{"email":"test@example.com","accName":"Ahorros"}'
+GET ACCOUNTS:
+curl -X POST http://localhost:3000/account/active-accounts -H "Content-Type: application/json" -d '{"email":"test@example.com"}'
+
+ACCOUNT COUNTER:
+curl -X POST http://localhost:3000/account/count -H "Content-Type: application/json" -d '{"email":"test@example.com"}'
+
+DEACTIVATE ACCOUNT:email, accountNumber
+curl -X POST http://localhost:3000/account/deactivate -H "Content-Type: application/json" -d '{"email":"test@example.com","accountNumber":"5502-ae456e0f-b746-42f5-9c31-88728bae298e"}'
 
 MAKE TRANSACTION. IMPORTANTE CADA VEZ QUE SE HACE UNACUENTA SE CREA UN NUMERO RANDOM POR LO QUE HAY QUE ACTUALIZAR ESTE COMANDO CON LOS QUE LE BOTE LA TERMINAL
         	user: string, accountOne:string, accountTwo:string, category:string, action:string, amountOne:string, 

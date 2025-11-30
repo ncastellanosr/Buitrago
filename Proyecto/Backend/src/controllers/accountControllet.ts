@@ -37,17 +37,51 @@ export async function createAcc(req: Request, res: Response){
 export async function deactivateAcc(req: Request, res: Response){
     try{
         const userRepo = AppDataSource.getRepository(AuthUser);
-        const { email, accName} = req.body;
+        const { email, accountNumber} = req.body;
         const user = await userRepo.findOne({ where: { email }});
         if(!user) {
             return res.status(400).json({message: "Fail, email can't get userId"});
         }
         const accountManager = new AccountManagement(new DeactivateAccount());
-        accountManager.manageAccount(user,{accName});
-        return res.status(201).json({message: "Account deactivated successfully.", user: {id:user.id, email:email, acc:accName}});
+        accountManager.manageAccount(user,accountNumber);
+        return res.status(201).json({message: "Account deactivated successfully.", user: {id:user.id, email:email, acc:accountNumber}});
     }catch (err){
         console.error("Fail, not able to manage account:", err);
         return res.status(500).json({ message: "Internal server error." });
     }
+}
+export async function getAccounts(req:Request, res:Response){
+    try{
+        const userRepo = AppDataSource.getRepository(AuthUser);
+        const accountRepo = AppDataSource.getRepository(Account);
+        const {email} = req.body;
+        const user = await userRepo.findOne({where: {email}});
+        if(!user){
+            return res.status(400).json({message: "Fail, email can't get userId"});
+        }
+        const accounts =  await accountRepo.find({where:{user:{id:user.id},isActive:true}});
+        return res.status(201).json({message:accounts});
+    } catch(err){
+        console.error("Fail, not able to manage account:", err);
+        return res.status(500).json({ message: "Internal server error." });
+    }
+}
+
+export async function accountCount(req:Request, res:Response){
+    try{
+        const userRepo = AppDataSource.getRepository(AuthUser);
+        const accountRepo = AppDataSource.getRepository(Account);
+        const {email} = req.body;
+        const user = await userRepo.findOne({where: {email}});
+        if(!user){
+            return res.status(400).json({message: "Fail, email can't get userId"});
+        }
+        const accountCount = await accountRepo.count({where:{user:{id:user.id},isActive:true}});
+        return res.status(201).json({message:accountCount});
+    }catch(err){
+        console.error("Fail, not able to manage account:", err);
+        return res.status(500).json({ message: "Internal server error." });     
+    }
+
 }
 

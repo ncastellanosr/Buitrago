@@ -12,6 +12,7 @@ import HomePage from './components/HomePage';
 import RegistrationForm from './components/RegistrationForm';
 import LoginForm from './components/LoginForm';
 import Calculadora from './components/Calculadora';
+import UserWallet from './components/UserWallet';
 import './App.css'
 import { Bot, X } from 'lucide-react';
 import NewPasswordForm from './components/NewPasswordForm';
@@ -65,7 +66,9 @@ const AppContent: React.FC = () => {
       case 'stocks':
         return <StockPrices />;
       case 'news':
-        return <FinancialNews />;
+        return <FinancialNews />
+      case 'wallet':
+        return <UserWallet />;
       default:
         return <Dashboard />;
     }

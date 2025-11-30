@@ -8,6 +8,14 @@ export interface ExpenseCategory {
   subcategories: string[];
 }
 
+export interface AccountCategory {
+  CASH:string,
+  SAVINGS:string,
+  CHECKING:string,
+  CREDIT_CART:string,
+  INVESTMENT:string,
+  OTHER:string
+}
 export interface IncomeCategory {
   id: string;
   name: string;

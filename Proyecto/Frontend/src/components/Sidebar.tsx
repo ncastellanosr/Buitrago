@@ -8,7 +8,8 @@ import {
   HelpCircle,
   Settings,
   PiggyBank,
-  LogOut
+  LogOut,
+  Wallet
 } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { Button } from './ui/button';
@@ -28,6 +29,12 @@ const menuItems: MenuItem[] = [
     label: 'Dashboard',
     icon: LayoutDashboard,
     description: 'Resumen general de tus finanzas'
+  },
+  {
+    id: 'wallet',
+    label: 'Billetera',
+    icon: Wallet,
+    description: 'Monitorea tus cuentas y transacciones'
   },
   {
     id: 'budget',
@@ -133,14 +140,6 @@ const Sidebar: React.FC = () => {
               >
                 <HelpCircle className="w-4 h-4 mr-2" />
                 Asistente Educativo
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full justify-start text-gray-600 hover:text-gray-900"
-              >
-                <Settings className="w-4 h-4 mr-2" />
-                Configuración
               </Button>
               <Button
                 variant="ghost"

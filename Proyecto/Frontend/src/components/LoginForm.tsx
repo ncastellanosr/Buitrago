@@ -4,9 +4,11 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '@/hooks/useAuth';
+import { useAccount } from '@/hooks/useAccount';
 
 const LoginForm: React.FC = () => {
-  const { dispatch } = useApp();
+  const { accountCount, activeAccounts } = useAccount();
+  const { dispatch, setUser, setToken, setAccountCount } = useApp();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -58,11 +60,22 @@ const LoginForm: React.FC = () => {
 
     try {
       const { login } = useAuth();
-      await login(formData.email, formData.password);
+      const response = await login(formData.email, formData.password);
+      setUser({
+        email: response.user.email,
+        name: response.user.name || '',
+        id: response.user.id,
+        role: response.user.role || 'user',
+      });
+      setToken(response.token);
       alert('Sesión iniciada correctamente.');
+      const accounts = await activeAccounts(formData.email);
+      const updatedCount = await accountCount(formData.email);
+      dispatch({ type: 'SET_ACCOUNTS', payload: accounts.message });
+      dispatch({ type: 'SET_ACCOUNT_COUNT', payload: updatedCount.message });
       dispatch({ type: 'SET_AUTHENTICATED', payload: true });
       dispatch({ type: 'SET_SHOW_HOME_PAGE', payload: false });
-
+      setFormData({ email: '', password: '' });
     } catch (error) {
       alert('Error al iniciar sesión. Por favor verifica tus credenciales.');
     } finally {

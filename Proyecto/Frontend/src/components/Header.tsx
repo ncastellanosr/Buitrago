@@ -2,8 +2,10 @@ import React from 'react';
 import { Bell, User, Search, TrendingUp } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { useApp } from '@/contexts/AppContext';
 
 const Header: React.FC = () => {
+  const { state } = useApp();
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
       <div className="flex items-center justify-between px-6 py-4">
@@ -26,7 +28,7 @@ const Header: React.FC = () => {
           </Button>
 
           <div className="hidden md:block text-right">
-            <p className="text-sm font-medium text-gray-900">Pelmazote</p>
+            <p className="text-sm font-medium text-gray-900">{state.user?.name}</p>
             <p className="text-xs text-gray-500">Bienvenid@</p>
           </div>
         </div>

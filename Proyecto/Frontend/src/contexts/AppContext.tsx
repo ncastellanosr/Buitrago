@@ -1,6 +1,31 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode, useState } from 'react';
 import { BudgetData, BudgetEntry, EducationalContent } from '../types';
 
+interface User {
+  id?: string;
+  email: string;
+  name?: string;
+  role?: string;
+}
+// accountCurrency
+// accountName
+// accountNumber
+// accountType
+// cachedBalance
+// createdAt
+// id
+// isActive
+interface Account {
+  id?: string;
+  accountName: string;
+  accountNumber: string;
+  accountType: 'CASH' | 'SAVINGS' | 'CHECKING' | 'CREDIT_CART' | 'INVESTMENT' | 'OTHER';
+  accountCurrency: 'USD' | 'EUR' | 'COP';
+  cachedBalance: number;
+  isActive: boolean;
+  createdAt?: string;
+}
+
 interface AppState {
   currentView: string;
   budgetData: BudgetData;
@@ -10,6 +35,10 @@ interface AppState {
   isAuthenticated: boolean;
   showHomePage: boolean;
   currentAuthView: 'home' | 'login' | 'register' | 'forgot-password';
+  user: User | null;
+  token: string | null;
+  accounts: Account[];
+  accountCount: number;
   userFinancials?: {
     ingresos: number;
     gastos: number;
@@ -19,7 +48,7 @@ interface AppState {
 }
 
 interface AppAction {
-  type: 'SET_VIEW' | 'UPDATE_BUDGET' | 'SET_EDUCATIONAL_CONTENT' | 'SET_SELECTED_TEXT' | 'TOGGLE_ASSISTANT' | 'ADD_INCOME' | 'ADD_EXPENSE' | 'REMOVE_INCOME' | 'REMOVE_EXPENSE' | 'SET_RISK_PROFILE' | 'SET_AUTHENTICATED' | 'SET_SHOW_HOME_PAGE' | 'SET_AUTH_VIEW';
+  type: 'SET_VIEW' | 'UPDATE_BUDGET' | 'SET_EDUCATIONAL_CONTENT' | 'SET_SELECTED_TEXT' | 'TOGGLE_ASSISTANT' | 'ADD_INCOME' | 'ADD_EXPENSE' | 'REMOVE_INCOME' | 'REMOVE_EXPENSE' | 'SET_RISK_PROFILE' | 'SET_AUTHENTICATED' | 'SET_SHOW_HOME_PAGE' | 'SET_AUTH_VIEW' | 'SET_USER' | 'SET_TOKEN' | 'LOGOUT' | 'SET_ACCOUNTS' | 'SET_ACCOUNT_COUNT';
   payload?: any;
 }
 
@@ -39,6 +68,10 @@ const initialState: AppState = {
   isAuthenticated: false,
   showHomePage: true,
   currentAuthView: 'home',
+  user: null,
+  token: null,
+  accounts: [],
+  accountCount: 0,
   userFinancials: {
     ingresos: 0,
     gastos: 0,
@@ -58,12 +91,22 @@ const AppContext = createContext<{
     ahorro: number;
     perfilRiesgo?: string;
   };
+  setUser: (user: User | null) => void;
+  setToken: (token: string | null) => void;
+  logout: () => void;
+  setAccounts: (accounts: Account[]) => void;
+  setAccountCount: (count: number) => void;
 }>({
   state: initialState,
   dispatch: () => null,
   showChat: false,
   setShowChat: () => {},
   userFinancials: undefined,
+  setUser: () => {},
+  setToken: () => {},
+  logout: () => {},
+  setAccounts: () => {},
+  setAccountCount: () => {},
 });
 
 const appReducer = (state: AppState, action: AppAction): AppState => {
@@ -161,6 +204,30 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
     
     case 'SET_AUTH_VIEW':
       return { ...state, currentAuthView: action.payload };
+
+    case 'SET_USER':
+      return { ...state, user: action.payload };
+
+    case 'SET_TOKEN':
+      return { ...state, token: action.payload };
+
+    case 'SET_ACCOUNTS':
+      return { ...state, accounts: action.payload };
+    
+    case 'SET_ACCOUNT_COUNT':
+      return { ...state, accountCount: action.payload };
+
+    case 'LOGOUT':
+      return {
+        ...state,
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        showHomePage: true,
+        currentAuthView: 'home',
+        accounts: [],
+        accountCount: 0,
+      };
     
     default:
       return state;
@@ -170,6 +237,54 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
   const [showChat, setShowChat] = useState(false);
+
+  // Restaurar sesión desde localStorage al cargar
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    const storedToken = localStorage.getItem('token');
+    
+    if (storedUser && storedToken) {
+      dispatch({ type: 'SET_USER', payload: JSON.parse(storedUser) });
+      dispatch({ type: 'SET_TOKEN', payload: storedToken });
+      dispatch({ type: 'SET_AUTHENTICATED', payload: true });
+      dispatch({ type: 'SET_SHOW_HOME_PAGE', payload: false });
+    }
+  }, []);
+
+  // Guardar en localStorage cuando cambia user o token
+  useEffect(() => {
+    if (state.user && state.token) {
+      localStorage.setItem('user', JSON.stringify(state.user));
+      localStorage.setItem('token', state.token);
+    }
+  }, [state.user, state.token]);
+
+  // Funciones auxiliares para manejar autenticación
+  const setUser = (user: User | null) => {
+    dispatch({ type: 'SET_USER', payload: user });
+    if (user) {
+      dispatch({ type: 'SET_AUTHENTICATED', payload: true });
+      dispatch({ type: 'SET_SHOW_HOME_PAGE', payload: false });
+    }
+  };
+
+  const setToken = (token: string | null) => {
+    dispatch({ type: 'SET_TOKEN', payload: token });
+  };
+
+  const logout = () => {
+    dispatch({ type: 'LOGOUT' });
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+  };
+
+  const setAccounts = (accounts: Account[]) => {
+    dispatch({ type: 'SET_ACCOUNTS', payload: accounts });
+  };
+
+  const setAccountCount = (count: number) => {
+    dispatch({ type: 'SET_ACCOUNT_COUNT', payload: count });
+  };
 
   // Calcula los datos financieros del usuario para IA
   const userFinancials = {
@@ -192,7 +307,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }, []);
 
   return (
-    <AppContext.Provider value={{ state, dispatch, showChat, setShowChat, userFinancials }}>
+    <AppContext.Provider value={{ 
+      state, 
+      dispatch, 
+      showChat, 
+      setShowChat, 
+      userFinancials,
+      setUser,
+      setToken,
+      logout,
+      setAccounts,
+      setAccountCount,
+    }}>
       {children}
     </AppContext.Provider>
   );

@@ -1,5 +1,6 @@
 import { AppDataSource } from "../database";
 import { Account } from "../entities/Account";
+import { AuthUser } from "../entities/AuthUser";
 
 const accountRepo = AppDataSource.getRepository(Account);
 export interface Actions {
@@ -23,8 +24,8 @@ export class CreateAccount implements Actions {
 }
 // tengo sueño lo completo más tarde :'c
 export class DeactivateAccount implements Actions {
-    public async doAction(user: any, account: any) {
-        const existingAccount = await accountRepo.findOneBy({user:{id:user.id}, accountName: account.accName });
+    public async doAction(user: AuthUser, accountNumber: string) {
+        const existingAccount = await accountRepo.findOneBy({user:{id:user.id}, accountNumber: accountNumber });
         if(!existingAccount){
             return console.log("F no sirvió")
         }

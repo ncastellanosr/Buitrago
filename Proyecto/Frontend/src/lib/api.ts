@@ -28,6 +28,7 @@ async function request(path: string, opts: RequestInit = {}) {
 }
 
 export const api = {
+  //Manejo de usuario
   login: (email: string, password: string) =>
     request("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) }),
   register: (email: string, password: string, name: string) =>
@@ -36,6 +37,15 @@ export const api = {
   logout: () => request("/auth/logout", { method: "POST" }),
   forgotPassword: (email: string, password: string) =>
     request("/auth/forgot-password", { method: "POST", body: JSON.stringify({ email, password }) }),
+  //Manejo de la cuenta
+  create: (email:string, accName:string,type:string,currency:string,balance:string) => 
+    request("/account/create", {method: "POST", body:JSON.stringify({email,accName,type,currency,balance})}),
+  count: (email:string) =>
+    request("/account/count", {method: "POST", body:JSON.stringify({email})}),
+  getActiveAccounts: (email:string) =>
+    request("/account/active-accounts", {method: "POST", body:JSON.stringify({email})}),
+  deactivateAccount: (email:string, accountNumber:string) =>
+    request("/account/deactivate", {method: "POST", body:JSON.stringify({email, accountNumber})}),
 };
 
 export async function login(credentials: { email: string; password: string }) {
