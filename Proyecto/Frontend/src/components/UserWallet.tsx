@@ -771,8 +771,18 @@ const handleCreateTransaction = async () => {
                       <p className="text-sm text-gray-500">{reminder.isSent ? 'Enviado' : 'No enviado'}</p>
                     </div>
                     <div className="absolute bottom-2 right-2 flex items-center gap-2">
-                      <Badge variant="secondary" className="text-green-700">
-                        {reminder.remindAt ? `${reminder.remindAt}` : 'No disponible'}
+                      <Badge variant="secondary" className="text-blue-700">
+                        {
+                        reminder?.remindAt
+                          ? new Date(reminder.remindAt).toLocaleDateString('es-ES', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })
+                          : 'No disponible'
+                        }
                       </Badge>
                     </div>
                   </div>
