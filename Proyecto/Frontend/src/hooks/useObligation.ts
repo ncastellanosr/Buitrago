@@ -22,5 +22,13 @@ export function useObligation() {
     const resp = await api.getObligations(email);
     return resp;
   }
-  return { makeObligation, obligationCounter, getAllObligations }
+  const createNewObligationReminder = async (
+    email:string,
+    title:string,
+    dueDate:string
+  ) => {
+    const resp = await api.createObligationReminder(email,title,dueDate);
+    return resp;
+  }
+  return { makeObligation, obligationCounter, getAllObligations, createNewObligationReminder }
 }

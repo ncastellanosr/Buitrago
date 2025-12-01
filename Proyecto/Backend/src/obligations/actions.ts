@@ -67,8 +67,8 @@ export class reminderInsertion implements Actions {
     title:string,
     dueDate:string): Promise<void> {
         const obligationRepo = AppDataSource.getRepository(Obligation);
-        const userRepo = AppDataSource.getRepository(AuthUser);
         const reminderRepo = AppDataSource.getRepository(Reminder);
+        const userRepo = AppDataSource.getRepository(AuthUser);
         const getUser = await userRepo.findOne( {where: {id:user} as any});
         if(!getUser){ throw new Error("Fail, user not found.")}
         const getObligation = await obligationRepo.findOne( {where: {title:title, user: {id: getUser.id}}});

@@ -81,4 +81,21 @@ export const api = {
     request("/obligation/count", {method: "POST", body:JSON.stringify({email})}),
   getObligations: (email:string) =>
     request("/obligation/get", {method: "POST", body: JSON.stringify({email})}),
+  createObligationReminder: (
+    email:string,
+    title:string,
+    dueDate:string
+  ) =>
+    request("/obligation/reminder", {method: "POST", body:JSON.stringify({email,title,dueDate})}
+  ),
+  createReminder: (
+    email:string,
+    title:string,
+    dueDate:string
+  ) =>
+    request("/reminder/new", {method: "POST", body:JSON.stringify({email,title,dueDate})}
+  ),
+  getReminders: (email:string) =>
+    request("/reminder/get", {method: "POST", body: JSON.stringify({email})}
+  ),
   };

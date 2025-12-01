@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Trash2, PieChart, Wallet, PersonStanding, WalletCardsIcon, DollarSign, CreditCard, Calendar, Receipt, Maximize2, X, CalendarPlus2 } from 'lucide-react';
+import { Plus, Trash2, PieChart, Wallet, PersonStanding, WalletCardsIcon, DollarSign, CreditCard, Calendar, Receipt, Maximize2, X, CalendarPlus2, BellPlus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -13,12 +13,16 @@ import { useApp } from '@/contexts/AppContext';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useTransaction } from '@/hooks/useTransaction';
 import { useObligation } from '@/hooks/useObligation';
+import { useReminder } from '@/hooks/useReminder';
 
 const UserWallet: React.FC = () => {
-  const { state, setAccountCount, setAccounts, setTransactionCount, setTransactions, setObligationCount, setObligations } = useApp();
+  //Datos temporales
+  const { state, setAccountCount, setAccounts, setTransactionCount, setTransactions, setObligationCount, setObligations, setReminders } = useApp();
+  //hooks
   const { createAccount, accountCount, activeAccounts, deactivateAccount} = useAccount();
   const { makeTransaction, countAllTransactions, getAllTransactinons } = useTransaction();
-  const { makeObligation, obligationCounter, getAllObligations } = useObligation();
+  const { makeObligation, obligationCounter, getAllObligations, createNewObligationReminder } = useObligation();
+  const { createReminder, getReminders } = useReminder();
   // Cuentas
   const [accountType, setAccountType] = useState<string>('');
   const [accountCurrency, setAccountCurrency] = useState<string>('');
@@ -44,12 +48,18 @@ const UserWallet: React.FC = () => {
   const [obligationDate, setObligationDate] = useState<Date | null>(null);
   const [obligationFrequency, setObligationFrequency] = useState<string>('');
   const [obligationModalOpen, setObligationModalOpen] = useState(false);
-  const [selectedObligation, setSelectedObligation ] = useState<any>(null);  
-
+  const [selectedObligation, setSelectedObligation ] = useState<any>(null);
+  //Recordatorios  
+  const [reminderTitle, setReminderTitle] = useState<string>('');
   const [reminderDate, setReminderDate] = useState<Date | null>(null);
+  const [reminerDescription, setReminderDescription] = useState<string>('');
+  const [reminderModalOpen, setReminderModalOpen] = useState(false);
+  const [selectedReminder, setSelectedReminder ] = useState<any>(null);
+  //fecha para Obligation y Reminder
   const fechaMinima = new Date();
   fechaMinima.setHours(0, 0, 0, 0);
-  fechaMinima.setMonth(fechaMinima.getMonth() + 1);
+  fechaMinima.setDate(fechaMinima.getDate() + 2);
+
 const refreshAccountData = async () => {
   try {
     if (!state.user?.email) {
@@ -97,6 +107,17 @@ const refreshObligationData = async () => {
     console.error('Error actualizando datos:', err);
   }
 };
+const refreshReminderData = async () => {
+  try {
+    if (!state.user?.email) {
+      throw new Error('Usuario no autenticado');
+    }
+    const remindersData = await getReminders(state.user.email);
+    setReminders(remindersData.message || []);
+  } catch (err) {
+    console.error('Error actualizando datos:', err);
+  }
+};
 const handleCreateTransaction = async () => {
     if (!state.user?.email) {
       throw new Error('Usuario no autenticado');
@@ -139,8 +160,27 @@ const handleCreateTransaction = async () => {
       setTransactionDescription('');
     }
   };
-
-  const handleObligation = async () => {
+  const handlecreateNewObligationReminder = async () => {
+    if(!state.user?.email){
+      throw new Error('Usuario no autentificado');
+    }
+    const newReminderForObligation = {
+      user:state.user?.id,
+      title:obligationTitle,
+      dueDate: obligationDate.toISOString().split('T')[0]
+    };
+    try{
+      await createNewObligationReminder(
+        newReminderForObligation.user,
+        newReminderForObligation.title,
+        newReminderForObligation.dueDate
+      )
+      alert('Obligación creada existosamente')
+    } catch(err){
+      alert('Error al crear la obligación. Revisa los datos e intenta nuevamente.');
+    }
+  }
+  const handleCreateObligation = async () => {
     if(!state.user?.email){
       throw new Error('Usuario no autenticado');
     }
@@ -158,7 +198,7 @@ const handleCreateTransaction = async () => {
     console.log(newObligation);
     try{
       await makeObligation(
-        state.user?.id,
+        newObligation.user,
         newObligation.title,
         newObligation.amountTotal,
         newObligation.amountRemaining,
@@ -168,7 +208,10 @@ const handleCreateTransaction = async () => {
         newObligation.state
       )
       alert('Obligación creada existosamente')
-      await refreshObligationData();
+      await Promise.all([
+      refreshObligationData(),
+      handlecreateNewObligationReminder()
+    ]);
     } catch(err){
       alert('Error al crear la obligación. Revisa los datos e intenta nuevamente.');
     } finally {
@@ -179,7 +222,31 @@ const handleCreateTransaction = async () => {
       setObligationFrequency('');
     }
   };
-
+  const handleCreateReminder = async () => {
+    if(!state.user?.email){
+      throw new Error('Usuario no autentificado');
+    }
+    const newReminder = {
+      email:state.user?.email || '',
+      title:reminderTitle,
+      dueDate: reminderDate?.toISOString().split('T')[0] || ''
+    };
+    try{
+      console.log('Creando recordatorio con:', newReminder);
+      await createReminder(newReminder.email,
+        newReminder.title,
+        newReminder.dueDate
+      );
+      await refreshReminderData();
+      alert('Recordatorio creado existosamente')
+    } catch(err){
+      alert('Error al crear el recordatorio. Revisa los datos e intenta nuevamente.');
+    } finally {
+      setReminderTitle('');
+      setReminderDate('' as any);
+      setReminderDescription('');
+    }
+  };
   const handleCreateAccount = async () => {
     if (!state.user?.email) {
       throw new Error('Usuario no autenticado');
@@ -598,7 +665,7 @@ const handleCreateTransaction = async () => {
                   </Select>
                 </div>
               </div>
-              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleObligation}>
+              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleCreateObligation}>
                 <Plus className="w-4 h-4 mr-2" />
                 Crear Obligación
               </Button>
@@ -632,7 +699,7 @@ const handleCreateTransaction = async () => {
                   </div>
                 ))
               ) : (
-                <p className="text-center text-gray-500 py-4">Aún no has agregado cuentas</p>
+                <p className="text-center text-gray-500 py-4">Aún no has agregado obligaciones</p>
               )}
             </div>
 
@@ -643,7 +710,7 @@ const handleCreateTransaction = async () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-blue-700">
-              <PersonStanding className="w-5 h-5" />
+              <BellPlus className="w-5 h-5" />
               Crear Recordatorio
             </CardTitle>
           </CardHeader>
@@ -654,6 +721,8 @@ const handleCreateTransaction = async () => {
                 <Input
                   id="reminder-title"
                   placeholder="Ej: Pagar servicios"
+                  value={reminderTitle}
+                  onChange={(e) => setReminderTitle(e.target.value)}
                 />
               </div>
               <div>
@@ -663,7 +732,7 @@ const handleCreateTransaction = async () => {
                   onChange={(date: Date) => setReminderDate(date)}
                   dateFormat="yyyy-MM-dd"
                   placeholderText="Selecciona una fecha"
-                  minDate={new Date()}
+                  minDate={fechaMinima}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -672,27 +741,45 @@ const handleCreateTransaction = async () => {
                 <Input
                   id="reminder-description"
                   placeholder="Ej: Pagar agua, luz e internet"
+                  value={reminerDescription}
+                  onChange={(e) => setReminderDescription(e.target.value)}
                 />
               </div>
-              <Button className="w-full bg-blue-600 hover:bg-blue-700">
+              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleCreateReminder}>
                 <Plus className="w-4 h-4 mr-2" />
                 Crear Recordatorio
               </Button>
             </div>
             <div className="space-y-2">
-              <div className="flex items-center justify-between p-3 bg-white border rounded-lg">
-                <div>
-                  <p className="font-medium">Préstamo gota a gota</p>
-                  <p className="text-sm text-gray-500">Vence en 30 días</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-yellow-700">$5,000</Badge>
-                  <Button size="sm" variant="ghost">
-                    <Trash2 className="w-4 h-4 text-red-500" />
-                  </Button>
-                </div>
-              </div>
-              <p className="text-center text-gray-500 py-4">Aún no has agregado obligaciones</p>
+              {state.reminders && state.reminders.length > 0 ? (
+                state.reminders.map((reminder) => (
+                  <div key={reminder.id} className="relative flex items-center justify-between p-3 bg-white border rounded-lg">
+                    {/* Botón en esquina superior derecha */}
+                    <Button 
+                      size="sm"
+                      variant="ghost"
+                      className="absolute top-2 right-2"
+                      onClick={() => {
+                        setSelectedReminder(reminder);
+                        setReminderModalOpen(true);
+                      }}
+                    > 
+                      <Maximize2 className="w-4 h-4 text-blue-500" />
+                    </Button>
+                    <div className="space-y-8">
+                      <p className="font-medium">{reminder.title || 'Recordatorio sin título'}</p>
+                      <p className="text-sm text-gray-500">{reminder.isSent ? 'Enviado' : 'No enviado'}</p>
+                    </div>
+                    <div className="absolute bottom-2 right-2 flex items-center gap-2">
+                      <Badge variant="secondary" className="text-green-700">
+                        {reminder.remindAt ? `${reminder.remindAt}` : 'No disponible'}
+                      </Badge>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center text-gray-500 py-4">Aún no has agregado recordatorios</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -946,6 +1033,103 @@ const handleCreateTransaction = async () => {
                 {
                 selectedTransaction?.createdAt
                   ? new Date(selectedTransaction.createdAt).toLocaleDateString('es-ES', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })
+                  : 'No disponible'
+                }
+              </Badge>
+              </div>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+      <Dialog.Root open={reminderModalOpen} onOpenChange={setReminderModalOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/50 z-40" />
+
+          <Dialog.Content className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl p-6 w-full max-w-lg">
+            <div className="flex items-center justify-between mb-4">
+              <Dialog.Title className="text-xl font-bold">
+                Detalles del recordatorio
+              </Dialog.Title>
+              <Dialog.Close asChild>
+                <button className="rounded-sm opacity-70 hover:opacity-100">
+                  <X className="h-4 w-4" />
+                </button>
+              </Dialog.Close>
+            </div>
+            <Dialog.Description className="sr-only">
+              Información completa de tu cuenta bancaria
+            </Dialog.Description>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">id</Label>
+              <div className="text-base text-gray-900 mt-1">
+              <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+                {selectedReminder?.id ?? 'No disponible'}
+              </Badge>
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">Título</Label>
+              <div className="text-base text-gray-900 mt-1">
+              <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+                {selectedReminder?.title ?? 'No disponible'}
+              </Badge> 
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">Mensaje</Label>
+              <div className="text-base text-gray-900 mt-1">
+              <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+                {selectedReminder?.message ?? 'No disponible'}
+              </Badge>
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">Fecha de recordatorio</Label>
+              <div className="text-base text-gray-900 mt-1"> 
+              <Badge variant="secondary" className="text-blue-700 text-sm px-2.5 py-1">
+                {
+                selectedReminder?.remindAt
+                  ? new Date(selectedReminder.remindAt).toLocaleDateString('es-ES', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })
+                  : 'No disponible'
+                }
+              </Badge>
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">Canales</Label>
+              <div className="text-base text-gray-900 mt-1">
+              <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+                {selectedReminder?.channels ?? 'No disponible'}
+              </Badge>  
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">Enviado</Label>
+              <div className="text-base text-gray-900 mt-1">
+              <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+                {selectedReminder?.isSent ? 'Enviado' : 'No enviado'}
+              </Badge>
+              </div>
+            </div>
+                        <div>
+              <Label className="text-sm font-medium text-gray-700">Fecha de creación</Label>
+              <div className="text-base text-gray-900 mt-1"> 
+              <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+                {
+                selectedReminder?.createdAt
+                  ? new Date(selectedReminder.createdAt).toLocaleDateString('es-ES', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric',

@@ -42,7 +42,19 @@ interface Obligations {
   state:string;
   createdAt?:string;
 }
-
+interface Reminder {
+  id?: string;
+  title: string;
+  message: string;
+  remindAt: string;
+  channelSet: {
+    push: boolean;
+    sms: boolean;
+    email: boolean;
+  };
+  isSent: boolean;
+  createdAt?: string;
+}
 interface AppState {
   currentView: string;
   budgetData: BudgetData;
@@ -57,6 +69,7 @@ interface AppState {
   accounts: Account[];
   obligations: Obligations[];
   transactions: TransactionTbl[];
+  reminders: Reminder[];
   accountCount: number;
   transactionCount:number;
   obligationCount:number;
@@ -72,7 +85,7 @@ interface AppAction {
   type: 'SET_VIEW' | 'UPDATE_BUDGET' | 'SET_EDUCATIONAL_CONTENT' | 'SET_SELECTED_TEXT' | 'TOGGLE_ASSISTANT' | 'ADD_INCOME' | 
   'ADD_EXPENSE' | 'REMOVE_INCOME' | 'REMOVE_EXPENSE' | 'SET_RISK_PROFILE' | 'SET_AUTHENTICATED' | 'SET_SHOW_HOME_PAGE' | 'SET_AUTH_VIEW' | 
   'SET_USER' | 'SET_TOKEN' | 'LOGOUT' | 'SET_ACCOUNTS' | 'SET_ACCOUNT_COUNT' | 'SET_TRANSACTION_COUNT' | 'SET_TRANSACTIONS'|
-  'SET_OBLIGATIONS' | 'SET_OBLIGATION_COUNT';
+  'SET_OBLIGATIONS' | 'SET_OBLIGATION_COUNT' | 'SET_REMINDERS';
   payload?: any;
 }
 
@@ -97,6 +110,7 @@ const initialState: AppState = {
   accounts: [],
   obligations: [],
   transactions: [],
+  reminders: [],
   accountCount: 0,
   transactionCount:0,
   obligationCount: 0,
@@ -128,6 +142,7 @@ const AppContext = createContext<{
   setTransactionCount: (count: number) => void;
   setObligations: (obligations: Obligations[]) => void;
   setObligationCount: (count: number) => void;
+  setReminders: (reminders: Reminder[]) => void;
 }>({
   state: initialState,
   dispatch: () => null,
@@ -143,6 +158,7 @@ const AppContext = createContext<{
   setTransactions: () => {},
   setObligations: () => {},
   setObligationCount: () => {},
+  setReminders: () => {},
 });
 
 const appReducer = (state: AppState, action: AppAction): AppState => {
@@ -262,6 +278,9 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
     case 'SET_OBLIGATION_COUNT':
       return { ...state, obligationCount: action.payload };
 
+    case 'SET_REMINDERS':
+      return { ...state, reminders: action.payload };
+
     case 'SET_TRANSACTIONS':
       return { ...state, transactions: action.payload };
 
@@ -371,6 +390,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const setObligationCount = (count: number) => {
     dispatch({ type: 'SET_OBLIGATION_COUNT', payload: count });
   };
+  const setReminders = (reminders: Reminder[]) => {
+    dispatch({ type: 'SET_REMINDERS', payload: reminders });
+  }
 
   // Calcula los datos financieros del usuario para IA
   const userFinancials = {
@@ -408,6 +430,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setTransactionCount,
       setObligations,
       setObligationCount,
+      setReminders,
     }}>
       {children}
     </AppContext.Provider>

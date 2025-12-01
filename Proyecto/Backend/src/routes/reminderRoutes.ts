@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { createReminder } from "../controllers/reminderController";
+import { createReminder, getReminders } from "../controllers/reminderController";
 
 const router = Router();
 
 router.post("/new", createReminder);
+router.post("/get", getReminders);
 
 export default router;
