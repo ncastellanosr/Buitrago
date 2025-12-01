@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes";
 import accountRoutes from "./routes/accountRoutes"
 import transactionRoutes from "./routes/transactionRoutes"
 import obligationRoutes from "./routes/obligationRoutes";
+import reminderRoutes from "./routes/reminderRoutes";
 import { authenticateToken, AuthRequest } from "./authMiddleware";
 import preferenciaNoticiaRoutes from "./newsFeed/PreferenciaNoticiaRoutes";
 import financialNewsRouter from './newsFeed/FinancialNews';
@@ -25,6 +26,7 @@ app.use("/transaction", transactionRoutes);
 app.use("/obligation", obligationRoutes);
 app.use('/api/financial-news', financialNewsRouter);
 app.use("/api/news-preferences", preferenciaNoticiaRoutes);
+app.use("/reminder", reminderRoutes);
 
 const PORT = 3000;
 

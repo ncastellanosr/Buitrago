@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode, useState } from 'react';
 import { BudgetData, BudgetEntry, EducationalContent } from '../types';
+import { set } from 'date-fns';
 
 interface User {
   id?: string;
@@ -30,6 +31,17 @@ interface TransactionTbl {
   isReconciled: string;
   metadata: string;
 }
+interface Obligations {
+  id?:string;
+  title:string;
+  amountTotal:string;
+  amountRemaining:string;
+  currency:string;
+  dueDate:string;
+  frequency:string;
+  state:string;
+  createdAt?:string;
+}
 
 interface AppState {
   currentView: string;
@@ -43,9 +55,11 @@ interface AppState {
   user: User | null;
   token: string | null;
   accounts: Account[];
+  obligations: Obligations[];
   transactions: TransactionTbl[];
   accountCount: number;
   transactionCount:number;
+  obligationCount:number;
   userFinancials?: {
     ingresos: number;
     gastos: number;
@@ -57,7 +71,8 @@ interface AppState {
 interface AppAction {
   type: 'SET_VIEW' | 'UPDATE_BUDGET' | 'SET_EDUCATIONAL_CONTENT' | 'SET_SELECTED_TEXT' | 'TOGGLE_ASSISTANT' | 'ADD_INCOME' | 
   'ADD_EXPENSE' | 'REMOVE_INCOME' | 'REMOVE_EXPENSE' | 'SET_RISK_PROFILE' | 'SET_AUTHENTICATED' | 'SET_SHOW_HOME_PAGE' | 'SET_AUTH_VIEW' | 
-  'SET_USER' | 'SET_TOKEN' | 'LOGOUT' | 'SET_ACCOUNTS' | 'SET_ACCOUNT_COUNT' | 'SET_TRANSACTION_COUNT' | 'SET_TRANSACTIONS';
+  'SET_USER' | 'SET_TOKEN' | 'LOGOUT' | 'SET_ACCOUNTS' | 'SET_ACCOUNT_COUNT' | 'SET_TRANSACTION_COUNT' | 'SET_TRANSACTIONS'|
+  'SET_OBLIGATIONS' | 'SET_OBLIGATION_COUNT';
   payload?: any;
 }
 
@@ -80,9 +95,11 @@ const initialState: AppState = {
   user: null,
   token: null,
   accounts: [],
+  obligations: [],
   transactions: [],
   accountCount: 0,
   transactionCount:0,
+  obligationCount: 0,
   userFinancials: {
     ingresos: 0,
     gastos: 0,
@@ -109,6 +126,8 @@ const AppContext = createContext<{
   setAccountCount: (count: number) => void;
   setTransactions: (transactions: TransactionTbl[]) => void;
   setTransactionCount: (count: number) => void;
+  setObligations: (obligations: Obligations[]) => void;
+  setObligationCount: (count: number) => void;
 }>({
   state: initialState,
   dispatch: () => null,
@@ -122,6 +141,8 @@ const AppContext = createContext<{
   setAccountCount: () => {},
   setTransactionCount: () => {},
   setTransactions: () => {},
+  setObligations: () => {},
+  setObligationCount: () => {},
 });
 
 const appReducer = (state: AppState, action: AppAction): AppState => {
@@ -235,6 +256,12 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
     case 'SET_TRANSACTION_COUNT':
       return { ...state, transactionCount: action.payload };
 
+    case 'SET_OBLIGATIONS':
+      return { ...state, obligations: action.payload };
+
+    case 'SET_OBLIGATION_COUNT':
+      return { ...state, obligationCount: action.payload };
+
     case 'SET_TRANSACTIONS':
       return { ...state, transactions: action.payload };
 
@@ -314,6 +341,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const setTransactions = (transactions: TransactionTbl[]) => {
     dispatch({ type: 'SET_TRANSACTIONS', payload: transactions });
   };
+  const setObligations = (obligations: Obligations[]) => {
+    dispatch({ type: 'SET_OBLIGATIONS', payload: obligations });
+  };
+  const setObligationCount = (count: number) => {
+    dispatch({ type: 'SET_OBLIGATION_COUNT', payload: count });
+  };
+
   // Calcula los datos financieros del usuario para IA
   const userFinancials = {
     ingresos: state.budgetData.totalIncome,
@@ -348,6 +382,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setTransactions,
       setAccountCount,
       setTransactionCount,
+      setObligations,
+      setObligationCount,
     }}>
       {children}
     </AppContext.Provider>

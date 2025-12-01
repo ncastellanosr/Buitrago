@@ -6,10 +6,12 @@ import { useApp } from '../contexts/AppContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useAccount } from '@/hooks/useAccount';
 import { useTransaction } from '@/hooks/useTransaction';
+import { useObligation } from '@/hooks/useObligation';
 
 const LoginForm: React.FC = () => {
   const { accountCount, activeAccounts } = useAccount();
   const { countAllTransactions, getAllTransactinons } = useTransaction();
+  const { obligationCounter, getAllObligations } = useObligation();
   const { dispatch, setUser, setToken} = useApp();
   const [formData, setFormData] = useState({
     email: '',
@@ -75,10 +77,14 @@ const LoginForm: React.FC = () => {
       const updatedCount = await accountCount(formData.email);
       const transactionCounter = await countAllTransactions(formData.email);
       const transactions = await getAllTransactinons(formData.email);
+      const obligationCounterData = await obligationCounter(formData.email);
+      const obligations = await getAllObligations(formData.email);
       dispatch({ type: 'SET_ACCOUNTS', payload: accounts.message });
       dispatch({ type: 'SET_ACCOUNT_COUNT', payload: updatedCount.message });
       dispatch({ type: 'SET_TRANSACTION_COUNT', payload: transactionCounter.message || 0 });
       dispatch({ type: 'SET_TRANSACTIONS', payload: transactions.message || [] });
+      dispatch({ type: 'SET_OBLIGATION_COUNT', payload: obligationCounterData.message || 0 });
+      dispatch({ type: 'SET_OBLIGATIONS', payload: obligations.message || [] });
       dispatch({ type: 'SET_AUTHENTICATED', payload: true });
       dispatch({ type: 'SET_SHOW_HOME_PAGE', payload: false });
       setFormData({ email: '', password: '' });

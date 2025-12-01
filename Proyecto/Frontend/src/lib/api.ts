@@ -47,7 +47,6 @@ export const api = {
   deactivateAccount: (email:string, accountNumber:string) =>
     request("/account/deactivate", {method: "POST", body:JSON.stringify({email, accountNumber})}),
   //Manejo de transacciones 
-  // "email","accountOne","accountTwo","category","amountOne","amountTwo","currency","description"
   makeTransaction: (
     email:string,
     accountOne:string,
@@ -64,4 +63,22 @@ export const api = {
     request("/transaction/count", {method: "POST", body:JSON.stringify({email})}),
   getTransactions: (email:string) =>
     request("/transaction/get", {method: "POST", body: JSON.stringify({email})}),
-};
+  //Manejo de obligaciones
+  //user, title, amountTotal, amountRemaining, currency, dueDate, frequency, state
+  createObligation: (
+    email:string,
+    title:string,
+    amountTotal:string,
+    amountRemaining:string,
+    currency:string,
+    dueDate:string,
+    frequency:string,
+    state:string
+  ) =>
+    request("/obligation/new", {method: "POST", body:JSON.stringify({email,title,amountTotal,amountRemaining,currency,dueDate,frequency,state})}
+  ),
+  countObligations: (email:string) =>
+    request("/obligation/count", {method: "POST", body:JSON.stringify({email})}),
+  getObligations: (email:string) =>
+    request("/obligation/get", {method: "POST", body: JSON.stringify({email})}),
+  };

@@ -68,15 +68,20 @@ curl -X POST http://localhost:3000/transaction/count -H "Content-Type: applicati
 TRANSACTION GETER
 curl -X POST http://localhost:3000/transaction/get -H "Content-Type: application/json" -d '{"email":"test@example.com"}'
 
-MAKE OBLIGATION / REMINDER
+MAKE OBLIGATION 
 user, title, amountTotal, amountRemaining, currency, dueDate, frequency, state
 curl -X POST http://localhost:3000/obligation/new \
 -H "Content-Type: application/json" \
 -d '{"user":"1", "title":"Probando titulo", "amountTotal":"5000", "amountRemaining":"5000", "currency":"USD", "dueDate":"2025-12-28", "frequency":"ONE_TIME", "state":"OPEN"}'
 
+COUNT OBLIGATION
+curl -X POST http://localhost:3000/obligation/count -H "Content-Type: application/json" -d '{"email":"test@example.com"}'
+
+GET OBLIGATIONS
+curl -X POST http://localhost:3000/obligation/get -H "Content-Type: application/json" -d '{"email":"test@example.com"}'
 
 MAKE REMINDER
 
 curl -X POST http://localhost:3000/obligation/reminder \
 -H "Content-Type: application/json" \
--d '{"user":"1", "title":"Probando titulo", "dueDate":"2025-12-28"}'
+-d '{"user":"1", "title":"Recordatorio de Probando titulo", "dueDate":"2025-12-28"}'

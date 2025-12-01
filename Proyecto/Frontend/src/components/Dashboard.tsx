@@ -143,7 +143,7 @@ const Dashboard: React.FC = () => {
             <Calendar className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">0</div>
+            <div className="text-2xl font-bold text-blue-600">{state.obligationCount}</div>
             <p className="text-sm text-gray-500">obligaciones pendientes</p>
           </CardContent>
         </Card>

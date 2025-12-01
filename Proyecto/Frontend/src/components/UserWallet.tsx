@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Trash2, PieChart, Wallet, PersonStanding, WalletCardsIcon, DollarSign, CreditCard, Calendar, Receipt, Maximize2, X } from 'lucide-react';
+import { Plus, Trash2, PieChart, Wallet, PersonStanding, WalletCardsIcon, DollarSign, CreditCard, Calendar, Receipt, Maximize2, X, CalendarPlus2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -12,11 +12,13 @@ import { useAccount } from '@/hooks/useAccount';
 import { useApp } from '@/contexts/AppContext';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useTransaction } from '@/hooks/useTransaction';
+import { useObligation } from '@/hooks/useObligation';
 
 const UserWallet: React.FC = () => {
-  const { state, setAccountCount, setAccounts, setTransactionCount, setTransactions } = useApp();
+  const { state, setAccountCount, setAccounts, setTransactionCount, setTransactions, setObligationCount, setObligations } = useApp();
   const { createAccount, accountCount, activeAccounts, deactivateAccount} = useAccount();
   const { makeTransaction, countAllTransactions, getAllTransactinons } = useTransaction();
+  const { makeObligation, obligationCounter, getAllObligations } = useObligation();
   // Cuentas
   const [accountType, setAccountType] = useState<string>('');
   const [accountCurrency, setAccountCurrency] = useState<string>('');
@@ -24,7 +26,6 @@ const UserWallet: React.FC = () => {
   const [accountName, setAccountName] = useState<string>('');
   const [accountModalOpen, setAccountModalOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<any>(null);  
-  const [obligationDate, setObligationDate] = useState<Date | null>(null);
   //Transacctiones
   const [transactionAccount1, setTransactionAccount1] = useState<string>('');
   const [transactionAccount2, setTransactionAccount2] = useState<string>('');
@@ -35,9 +36,20 @@ const UserWallet: React.FC = () => {
   const [transactionCurrency, setTransactionCurrency] = useState<string>('');
   const [transactionModalOpen, setTransactionModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction ] = useState<any>(null);  
+  //Obligaciones  
+  const [obligationTitle, setObligationTitle] = useState<string>('');
+  const [obligationAmountTotal, setObligationAmountTotal] = useState<string>('');
+  const [obligationAmountRemaining, setObligationAmountRemaining] = useState<string>('');
+  const [obligationCurrency, setObligationCurrency] = useState<string>('');
+  const [obligationDate, setObligationDate] = useState<Date | null>(null);
+  const [obligationFrequency, setObligationFrequency] = useState<string>('');
+  const [obligationModalOpen, setObligationModalOpen] = useState(false);
+  const [selectedObligation, setSelectedObligation ] = useState<any>(null);  
 
   const [reminderDate, setReminderDate] = useState<Date | null>(null);
-
+  const fechaMinima = new Date();
+  fechaMinima.setHours(0, 0, 0, 0);
+  fechaMinima.setMonth(fechaMinima.getMonth() + 1);
 const refreshAccountData = async () => {
   try {
     if (!state.user?.email) {
@@ -70,7 +82,22 @@ const refreshTransactionData = async () => {
     console.error('Error actualizando datos:', err);
   }
 };
-  const handleCreateTransaction = async () => {
+const refreshObligationData = async () => {
+  try {
+    if (!state.user?.email) {
+      throw new Error('Usuario no autenticado');
+    }
+    const [countData, obligationsData] = await Promise.all([
+      obligationCounter(state.user.email),
+      getAllObligations(state.user.email)
+    ]);
+    setObligationCount(countData.message || 0);
+    setObligations(obligationsData.message || []);
+  } catch (err) {
+    console.error('Error actualizando datos:', err);
+  }
+};
+const handleCreateTransaction = async () => {
     if (!state.user?.email) {
       throw new Error('Usuario no autenticado');
     }
@@ -110,6 +137,46 @@ const refreshTransactionData = async () => {
       setTransactionCategory('');
       setTransactionCurrency('');
       setTransactionDescription('');
+    }
+  };
+
+  const handleObligation = async () => {
+    if(!state.user?.email){
+      throw new Error('Usuario no autenticado');
+    }
+    const formattedDate = obligationDate.toISOString().split('T')[0];   
+    const newObligation = {
+      user:state.user?.id,
+      title:obligationTitle,
+      amountTotal:obligationAmountTotal,
+      amountRemaining:obligationAmountTotal,
+      currency:obligationCurrency,
+      dueDate:formattedDate,
+      frequency:obligationFrequency,
+      state:"OPEN"
+    };
+    console.log(newObligation);
+    try{
+      await makeObligation(
+        state.user?.id,
+        newObligation.title,
+        newObligation.amountTotal,
+        newObligation.amountRemaining,
+        newObligation.currency,
+        newObligation.dueDate,
+        newObligation.frequency,
+        newObligation.state
+      )
+      alert('Obligación creada existosamente')
+      await refreshObligationData();
+    } catch(err){
+      alert('Error al crear la obligación. Revisa los datos e intenta nuevamente.');
+    } finally {
+      setObligationTitle('');
+      setObligationAmountTotal('');
+      setObligationCurrency('');
+      setObligationDate('' as any);
+      setObligationFrequency('');
     }
   };
 
@@ -204,7 +271,7 @@ const refreshTransactionData = async () => {
             <Calendar className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">0</div>
+            <div className="text-2xl font-bold text-blue-600">{state.obligationCount}</div>
             <p className="text-sm text-gray-500">obligaciones pendientes</p>
           </CardContent>
         </Card>
@@ -462,7 +529,7 @@ const refreshTransactionData = async () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-blue-700">
-              <PersonStanding className="w-5 h-5" />
+              <CalendarPlus2 className="w-5 h-5" />
               Crear Obligación
             </CardTitle>
           </CardHeader>
@@ -473,16 +540,24 @@ const refreshTransactionData = async () => {
                 <Input
                   id="obligation-title"
                   placeholder="Ej: Préstamo gota a gota"
+                  value = {obligationTitle}
+                  onChange={e => setObligationTitle(e.target.value)}
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <Label htmlFor="obligation-amount">Monto Total</Label>
-                  <Input id="obligation-amount" type="number" placeholder="0" />
+                  <Input id="obligation-amount" 
+                  type="number" 
+                  placeholder="0.00" 
+                  value={obligationAmountTotal}
+                  onChange={e => setObligationAmountTotal(e.target.value)}
+                  />
+
                 </div>
                 <div>
                   <Label htmlFor="obligation-currency">Moneda</Label>
-                  <Select>
+                  <Select value ={obligationCurrency} onValueChange={setObligationCurrency}>
                     <SelectTrigger id="obligation-currency">
                       <SelectValue placeholder="Selecciona moneda" />
                     </SelectTrigger>
@@ -502,13 +577,13 @@ const refreshTransactionData = async () => {
                     onChange={(date: Date) => setObligationDate(date)}
                     dateFormat="yyyy-MM-dd"
                     placeholderText="Selecciona una fecha"
-                    minDate={new Date()}
+                    minDate={fechaMinima}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
                   <Label htmlFor="obligation-frequency">Frecuencia de Pago</Label>
-                  <Select>
+                  <Select value={obligationFrequency} onValueChange={setObligationFrequency}>
                     <SelectTrigger id="obligation-frequency">
                       <SelectValue placeholder="Selecciona frecuencia" />
                     </SelectTrigger>
@@ -523,28 +598,44 @@ const refreshTransactionData = async () => {
                   </Select>
                 </div>
               </div>
-              <Button className="w-full bg-blue-600 hover:bg-blue-700">
+              <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={handleObligation}>
                 <Plus className="w-4 h-4 mr-2" />
                 Crear Obligación
               </Button>
             </div>
 
-            {/* Lista de obligaciones */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between p-3 bg-white border rounded-lg">
-                <div>
-                  <p className="font-medium">Préstamo gota a gota</p>
-                  <p className="text-sm text-gray-500">Vence en 30 días</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-yellow-700">$5,000</Badge>
-                  <Button size="sm" variant="ghost">
-                    <Trash2 className="w-4 h-4 text-red-500" />
-                  </Button>
-                </div>
-              </div>
-              <p className="text-center text-gray-500 py-4">Aún no has agregado obligaciones</p>
+              {state.obligations && state.obligations.length > 0 ? (
+                state.obligations.map((obligation) => (
+                  <div key={obligation.id} className="relative flex items-center justify-between p-3 bg-white border rounded-lg">
+                    {/* Botón en esquina superior derecha */}
+                    <Button 
+                      size="sm"
+                      variant="ghost"
+                      className="absolute top-2 right-2"
+                      onClick={() => {
+                        setSelectedObligation(obligation);
+                        setObligationModalOpen(true);
+                      }}
+                    > 
+                      <Maximize2 className="w-4 h-4 text-blue-500" />
+                    </Button>
+                    <div className="space-y-8">
+                      <p className="font-medium">{obligation.title || 'Obligación sin título'}</p>
+                      <p className="text-sm text-gray-500">{obligation.frequency}</p>
+                    </div>
+                    <div className="absolute bottom-2 right-2 flex items-center gap-2">
+                      <Badge variant="secondary" className="text-green-700">
+                        {obligation.amountRemaining ? `$${obligation.amountRemaining}` : '$0.00'}
+                      </Badge>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center text-gray-500 py-4">Aún no has agregado cuentas</p>
+              )}
             </div>
+
           </CardContent>
         </Card>
 
@@ -588,19 +679,20 @@ const refreshTransactionData = async () => {
                 Crear Recordatorio
               </Button>
             </div>
-
-            {/* Lista de recordatorios */}
             <div className="space-y-2">
               <div className="flex items-center justify-between p-3 bg-white border rounded-lg">
                 <div>
-                  <p className="font-medium">Pagar servicios</p>
-                  <p className="text-sm text-gray-500">2025-12-05</p>
+                  <p className="font-medium">Préstamo gota a gota</p>
+                  <p className="text-sm text-gray-500">Vence en 30 días</p>
                 </div>
-                <Button size="sm" variant="ghost">
-                  <Trash2 className="w-4 h-4 text-red-500" />
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-yellow-700">$5,000</Badge>
+                  <Button size="sm" variant="ghost">
+                    <Trash2 className="w-4 h-4 text-red-500" />
+                  </Button>
+                </div>
               </div>
-              <p className="text-center text-gray-500 py-4">No has agregado recordatorios aún</p>
+              <p className="text-center text-gray-500 py-4">Aún no has agregado obligaciones</p>
             </div>
           </CardContent>
         </Card>
@@ -684,7 +776,112 @@ const refreshTransactionData = async () => {
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
-            <Dialog.Root open={transactionModalOpen} onOpenChange={setTransactionModalOpen}>
+      <Dialog.Root open={obligationModalOpen} onOpenChange={setObligationModalOpen}>
+        <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-black/50 z-40" />
+
+          <Dialog.Content className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl p-6 w-full max-w-lg">
+            <div className="flex items-center justify-between mb-4">
+              <Dialog.Title className="text-xl font-bold">
+                Detalles de la obligación
+              </Dialog.Title>
+              <Dialog.Close asChild>
+                <button className="rounded-sm opacity-70 hover:opacity-100">
+                  <X className="h-4 w-4" />
+                </button>
+              </Dialog.Close>
+            </div>
+            <Dialog.Description className="sr-only">
+              Información completa de tu cuenta bancaria
+            </Dialog.Description>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">id</Label>
+              <div className="text-base text-gray-900 mt-1">
+              <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+                {selectedObligation?.id ?? 'No disponible'}
+              </Badge>
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">Título</Label>
+              <div className="text-base text-gray-900 mt-1">
+              <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+                {selectedObligation?.title ?? 'No disponible'}
+              </Badge> 
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">Monto total</Label>
+              <div className="text-base text-gray-900 mt-1">
+              <Badge variant="secondary" className="text-red-700 text-sm px-2.5 py-1">
+                {selectedObligation?.amountTotal ? `$${selectedObligation.amountTotal}` : '$0.00'}
+              </Badge>
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">Monto restante</Label>
+              <div className="text-base text-gray-900 mt-1">
+              <Badge variant="secondary" className="text-green-700 text-sm px-2.5 py-1">
+                {selectedObligation?.amountRemaining ? `$${selectedObligation.amountRemaining}` : '$0.00'}
+              </Badge>
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">Moneda</Label>
+              <div className="text-base text-gray-900 mt-1">
+              <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+                {selectedObligation?.currency ?? 'No disponible'}
+              </Badge>  
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">Fecha límite</Label>
+              <div className="text-base text-gray-900 mt-1"> 
+              <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+                {
+                selectedObligation?.dueDate
+                  ? new Date(selectedObligation.dueDate).toLocaleDateString('es-ES', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })
+                  : 'No disponible'
+                }
+              </Badge>
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">Frecuencia</Label>
+              <div className="text-base text-gray-900 mt-1">
+              <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+                {selectedObligation?.frequency ?? 'No disponible'}
+              </Badge>
+              </div>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-gray-700">Fecha de creación</Label>
+              <div className="text-base text-gray-900 mt-1"> 
+              <Badge variant="secondary" className="text-black-700 text-sm px-2.5 py-1">
+                {
+                selectedObligation?.createdAt
+                  ? new Date(selectedObligation.createdAt).toLocaleDateString('es-ES', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })
+                  : 'No disponible'
+                }
+              </Badge>
+              </div>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+      <Dialog.Root open={transactionModalOpen} onOpenChange={setTransactionModalOpen}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-black/50 z-40" />
 
@@ -763,6 +960,7 @@ const refreshTransactionData = async () => {
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
+
     </div>
   );
 };
