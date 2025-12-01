@@ -212,6 +212,7 @@ const handleCreateTransaction = async () => {
       refreshObligationData(),
       handlecreateNewObligationReminder()
     ]);
+    refreshReminderData();
     } catch(err){
       alert('Error al crear la obligación. Revisa los datos e intenta nuevamente.');
     } finally {
