@@ -263,12 +263,31 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('token');
-    
+    const storedView = localStorage.getItem('currentView');
     if (storedUser && storedToken) {
-      dispatch({ type: 'SET_USER', payload: JSON.parse(storedUser) });
-      dispatch({ type: 'SET_TOKEN', payload: storedToken });
-      dispatch({ type: 'SET_AUTHENTICATED', payload: true });
-      dispatch({ type: 'SET_SHOW_HOME_PAGE', payload: false });
+      try {
+        const [, payloadB64] = storedToken.split('.');
+        const payloadJson = atob(payloadB64);
+        const payload = JSON.parse(payloadJson);
+        if (payload.exp && payload.exp * 1000 > Date.now()) {
+          dispatch({ type: 'SET_USER', payload: JSON.parse(storedUser) });
+          dispatch({ type: 'SET_TOKEN', payload: storedToken });
+          dispatch({ type: 'SET_AUTHENTICATED', payload: true });
+          dispatch({ type: 'SET_SHOW_HOME_PAGE', payload: false });
+          if (storedView) {
+            dispatch({ type: 'SET_VIEW', payload: storedView });
+          }
+        } else {
+          // Token vencido
+          localStorage.removeItem('user');
+          localStorage.removeItem('token');
+          localStorage.removeItem('currentView');
+        }
+      } catch {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('currentView');
+      }
     }
   }, []);
 
@@ -279,6 +298,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       localStorage.setItem('token', state.token);
     }
   }, [state.user, state.token]);
+
+  useEffect(() => {
+    localStorage.setItem('currentView', state.currentView);
+  }, [state.currentView]);
 
   // Funciones auxiliares para manejar autenticación
   const setUser = (user: User | null) => {
@@ -297,6 +320,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     dispatch({ type: 'LOGOUT' });
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    localStorage.removeItem('currentView');
   };
 
   const setAccounts = (accounts: Account[]) => {
