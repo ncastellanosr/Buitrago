@@ -28,9 +28,9 @@ export class DataChecker implements Actions{
             // currency:string, 
             // description:string  
 
-    async hasUser(user:any): Promise<boolean> {
-        if (!user) return false;
-        const found = await userRepo.findOne({ where: { id: user } as any });
+    async hasUser(email:string): Promise<boolean> {
+        if (!email) return false;
+        const found = await userRepo.findOne({ where: { email: email } as any });
         return !!found;
     }
     async hasAccount(accountOne:any, accountTwo:any): Promise<boolean> {
@@ -65,7 +65,7 @@ export class DataChecker implements Actions{
         return true;
     }
 
-    async doAction(user:string,
+    async doAction(email:string,
             accountOne:string, 
             accountTwo:string, 
             category:string, 
@@ -74,7 +74,7 @@ export class DataChecker implements Actions{
             currency:string,
             description:string,
             action:string): Promise<boolean> {
-        if (!await this.hasUser(user)) { return false; }
+        if (!await this.hasUser(email)) { return false; }
         if (!await this.hasAccount(accountOne, accountTwo)) { return false; }
         if (!await this.hasAmount(amountOne, accountOne)) { return false; }
         if(accountTwo){
@@ -87,7 +87,7 @@ export class DataChecker implements Actions{
 }
 
 export class InsertionTransaction implements Actions {
-    public async doAction(user:string,
+    public async doAction(email:string,
             accountOne:string, 
             accountTwo:string, 
             category:string, 
@@ -96,8 +96,13 @@ export class InsertionTransaction implements Actions {
             currency:string,
             description:string,
             action:string ): Promise<void> {
+        const userRepo = AppDataSource.getRepository(AuthUser);
         const accountRepo = AppDataSource.getRepository(Account);
         const transactionRepo = AppDataSource.getRepository(TransactionTbl);
+        const getUser =  await userRepo.findOne({ where: { email: email } as any});
+        if (!getUser) {
+            throw new Error("User not found");
+        }
         const getAccountOne = await accountRepo.findOne({ where: { accountNumber: accountOne } as any});
         let getAccountTwo = null;
         if(accountTwo){
@@ -109,6 +114,7 @@ export class InsertionTransaction implements Actions {
             throw new Error("Account or category not found");
         }
         const newTransaction = transactionRepo.create({
+            user: getUser,
             account: getAccountOne,
             relatedAccount: getAccountTwo,
             category: getCategory,
@@ -137,12 +143,12 @@ export class UpdateAccount implements Actions {
         const accountRepo = AppDataSource.getRepository(Account);
         const getAccountOne = await accountRepo.findOne({ where: { accountNumber: accountOne } as any});
         if (!getAccountOne) { throw new Error("Account not found");}
-        getAccountOne.cachedBalance = (+getAccountOne.cachedBalance - +amountOne);
+        getAccountOne.cachedBalance = +amountOne
         await accountRepo.save(getAccountOne);
         if(accountTwo){
             const getAccountTwo = await accountRepo.findOne({ where: { accountNumber: accountTwo } as any});
             if (!getAccountTwo) { throw new Error("Account not found");}
-            getAccountTwo.cachedBalance = (+getAccountTwo.cachedBalance - +amountTwo);
+            getAccountTwo.cachedBalance = +amountTwo
             await accountRepo.save(getAccountTwo);
         }
     }

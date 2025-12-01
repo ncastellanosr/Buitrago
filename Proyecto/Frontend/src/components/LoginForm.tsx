@@ -5,10 +5,12 @@ import { Input } from './ui/input';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useAccount } from '@/hooks/useAccount';
+import { useTransaction } from '@/hooks/useTransaction';
 
 const LoginForm: React.FC = () => {
   const { accountCount, activeAccounts } = useAccount();
-  const { dispatch, setUser, setToken, setAccountCount } = useApp();
+  const { countAllTransactions, getAllTransactinons } = useTransaction();
+  const { dispatch, setUser, setToken} = useApp();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -71,8 +73,12 @@ const LoginForm: React.FC = () => {
       alert('Sesión iniciada correctamente.');
       const accounts = await activeAccounts(formData.email);
       const updatedCount = await accountCount(formData.email);
+      const transactionCounter = await countAllTransactions(formData.email);
+      const transactions = await getAllTransactinons(formData.email);
       dispatch({ type: 'SET_ACCOUNTS', payload: accounts.message });
       dispatch({ type: 'SET_ACCOUNT_COUNT', payload: updatedCount.message });
+      dispatch({ type: 'SET_TRANSACTION_COUNT', payload: transactionCounter.message || 0 });
+      dispatch({ type: 'SET_TRANSACTIONS', payload: transactions.message || [] });
       dispatch({ type: 'SET_AUTHENTICATED', payload: true });
       dispatch({ type: 'SET_SHOW_HOME_PAGE', payload: false });
       setFormData({ email: '', password: '' });

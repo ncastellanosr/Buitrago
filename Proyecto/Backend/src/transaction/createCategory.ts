@@ -9,11 +9,11 @@ import { Category, CategoryTypeOptions } from "../entities/Category";
         const getAccount = await accountRepo.findOne({ where: { accountNumber:userData.accountNumber}}) 
 
         const newCategory = categoryRepo.create({
-            name: `${userData.category} - Account Transactions ${getAccount?.accountType}`,
+            name: `${userData.category} - Account Transactions ${getAccount?.accountNumber}`,
             categoryType: CategoryTypeOptions[userData.category as keyof typeof CategoryTypeOptions],
             description: 'Category created automatically during transaction, date: ' + new Date().toISOString(),
         });
         await categoryRepo.save(newCategory);
-        return `${userData.category} - Account Transactions ${getAccount?.accountType}`
+        return `${userData.category} - Account Transactions ${getAccount?.accountNumber}`
     }
 }

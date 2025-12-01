@@ -7,14 +7,7 @@ interface User {
   name?: string;
   role?: string;
 }
-// accountCurrency
-// accountName
-// accountNumber
-// accountType
-// cachedBalance
-// createdAt
-// id
-// isActive
+
 interface Account {
   id?: string;
   accountName: string;
@@ -24,6 +17,18 @@ interface Account {
   cachedBalance: number;
   isActive: boolean;
   createdAt?: string;
+}
+
+interface TransactionTbl {
+  id?: string;
+  transactionType: string;
+  amount: string;
+  currency: string;
+  description: string;
+  ocurredAt: string;
+  createdAt: string;
+  isReconciled: string;
+  metadata: string;
 }
 
 interface AppState {
@@ -38,7 +43,9 @@ interface AppState {
   user: User | null;
   token: string | null;
   accounts: Account[];
+  transactions: TransactionTbl[];
   accountCount: number;
+  transactionCount:number;
   userFinancials?: {
     ingresos: number;
     gastos: number;
@@ -48,7 +55,9 @@ interface AppState {
 }
 
 interface AppAction {
-  type: 'SET_VIEW' | 'UPDATE_BUDGET' | 'SET_EDUCATIONAL_CONTENT' | 'SET_SELECTED_TEXT' | 'TOGGLE_ASSISTANT' | 'ADD_INCOME' | 'ADD_EXPENSE' | 'REMOVE_INCOME' | 'REMOVE_EXPENSE' | 'SET_RISK_PROFILE' | 'SET_AUTHENTICATED' | 'SET_SHOW_HOME_PAGE' | 'SET_AUTH_VIEW' | 'SET_USER' | 'SET_TOKEN' | 'LOGOUT' | 'SET_ACCOUNTS' | 'SET_ACCOUNT_COUNT';
+  type: 'SET_VIEW' | 'UPDATE_BUDGET' | 'SET_EDUCATIONAL_CONTENT' | 'SET_SELECTED_TEXT' | 'TOGGLE_ASSISTANT' | 'ADD_INCOME' | 
+  'ADD_EXPENSE' | 'REMOVE_INCOME' | 'REMOVE_EXPENSE' | 'SET_RISK_PROFILE' | 'SET_AUTHENTICATED' | 'SET_SHOW_HOME_PAGE' | 'SET_AUTH_VIEW' | 
+  'SET_USER' | 'SET_TOKEN' | 'LOGOUT' | 'SET_ACCOUNTS' | 'SET_ACCOUNT_COUNT' | 'SET_TRANSACTION_COUNT' | 'SET_TRANSACTIONS';
   payload?: any;
 }
 
@@ -71,7 +80,9 @@ const initialState: AppState = {
   user: null,
   token: null,
   accounts: [],
+  transactions: [],
   accountCount: 0,
+  transactionCount:0,
   userFinancials: {
     ingresos: 0,
     gastos: 0,
@@ -96,6 +107,8 @@ const AppContext = createContext<{
   logout: () => void;
   setAccounts: (accounts: Account[]) => void;
   setAccountCount: (count: number) => void;
+  setTransactions: (transactions: TransactionTbl[]) => void;
+  setTransactionCount: (count: number) => void;
 }>({
   state: initialState,
   dispatch: () => null,
@@ -107,6 +120,8 @@ const AppContext = createContext<{
   logout: () => {},
   setAccounts: () => {},
   setAccountCount: () => {},
+  setTransactionCount: () => {},
+  setTransactions: () => {},
 });
 
 const appReducer = (state: AppState, action: AppAction): AppState => {
@@ -217,6 +232,12 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
     case 'SET_ACCOUNT_COUNT':
       return { ...state, accountCount: action.payload };
 
+    case 'SET_TRANSACTION_COUNT':
+      return { ...state, transactionCount: action.payload };
+
+    case 'SET_TRANSACTIONS':
+      return { ...state, transactions: action.payload };
+
     case 'LOGOUT':
       return {
         ...state,
@@ -286,6 +307,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     dispatch({ type: 'SET_ACCOUNT_COUNT', payload: count });
   };
 
+  const setTransactionCount = (count: number) => {
+    dispatch({ type: 'SET_TRANSACTION_COUNT', payload: count });
+  };
+
+  const setTransactions = (transactions: TransactionTbl[]) => {
+    dispatch({ type: 'SET_TRANSACTIONS', payload: transactions });
+  };
   // Calcula los datos financieros del usuario para IA
   const userFinancials = {
     ingresos: state.budgetData.totalIncome,
@@ -317,7 +345,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setToken,
       logout,
       setAccounts,
+      setTransactions,
       setAccountCount,
+      setTransactionCount,
     }}>
       {children}
     </AppContext.Provider>

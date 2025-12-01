@@ -22,14 +22,13 @@ export class Category {
     @PrimaryGeneratedColumn('increment', {type:'bigint'})
     id: number;
     
-    @Column({ type: 'varchar', length: 100, unique: true})
+    @Column({ type: 'varchar', length: 100})
     name: string;
     
     @Column({ 
         type: 'enum',
         enum: CategoryTypeOptions,
         default: CategoryTypeOptions.OTHER,
-        unique: true
     })
     categoryType: CategoryTypeOptions;
     
